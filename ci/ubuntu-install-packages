@@ -1,4 +1,9 @@
 #!/bin/sh
 
-apt-get update -q -y
-apt-get install cmake openssl libssl-dev pkg-config curl -q -y
+if ! command -V sudo; then
+  apt-get update
+  apt-get install -y --no-install-recommends sudo
+fi
+
+sudo apt-get update -q -y
+sudo apt-get install cmake openssl libssl-dev pkg-config curl -q -y
