@@ -19,7 +19,7 @@ impl Crop {
             uuid: Uuid::new_v4(),
             left,
             right,
-            leds: vec![Rgb::new(0, 0, 0); *STRIP_SIZE]
+            leds: Vec::new()
         }
     }
 }
@@ -28,6 +28,9 @@ impl Crop {
 impl Layer for Crop {
 
     fn initialize(&mut self, previous_layers: &[BoxedLayer]) {
+
+        self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
+
         if self.left as usize > *STRIP_SIZE {
             log::info!("Left value for crop is to big!");
         } else if self.right as usize > *STRIP_SIZE {
