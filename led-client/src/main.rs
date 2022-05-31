@@ -72,7 +72,7 @@ async fn main() {
                     }
                 }
 
-                new_layer.initialize(&slice_from_raw_parts(new_layers.layers.as_ptr(), new_layers.layers.len()));
+                new_layer.initialize(&new_layers.layers);
                 new_layers.push_layer(new_layer);
 
             }
@@ -106,16 +106,14 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
         };
 
         {
-            let layers = &*strip.layers;
-            let ptr = layers.as_ptr();
-
-
             for i in 0..amount_layers {
-                if i == 0 {
-                    strip.layers[i].update(&slice_from_raw_parts(ptr, 0));
+
+                if let Some((new_layer, previous_layers)) = strip.layers[0..i].split_last_mut() {
+                    new_layer.update(previous_layers);
                 } else {
-                    strip.layers[i].update(&slice_from_raw_parts(ptr, i - 1));
+                    strip.layers[i].update(&[]);
                 }
+
             }
         }
 

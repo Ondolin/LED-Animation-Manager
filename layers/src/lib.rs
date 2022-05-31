@@ -11,6 +11,7 @@ pub use none::NoAnimation;
 
 pub mod static_layers;
 pub mod rainbow_layers;
+pub mod filter;
 
 
 pub type BoxedLayer = Box<dyn Layer>;
@@ -20,8 +21,8 @@ pub use angular_units::Deg;
 
 #[typetag::serde(tag = "type")]
 pub trait Layer: Send + Sync + Debug {
-    fn initialize(&mut self, _previous_layers: &*const [BoxedLayer]);
-    fn update(&mut self, _previous_layers: &*const [BoxedLayer]);
+    fn initialize(&mut self, _previous_layers: &[BoxedLayer]);
+    fn update(&mut self, _previous_layers: &[BoxedLayer]);
     fn to_led_values(&self) -> &Vec<Rgb>;
     fn uuid(&self) -> Uuid;
     // fn delete(&mut self, _previous_layers: Vec<Box<dyn Layer>>) { unimplemented!() }

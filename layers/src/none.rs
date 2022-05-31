@@ -23,11 +23,11 @@ impl NoAnimation {
 #[typetag::serde]
 impl Layer for NoAnimation {
 
-    fn initialize(&mut self, _previous_layers: &*const [BoxedLayer]) {
+    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) {
         self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
     }
 
-    fn update(&mut self, _previous_layers: &*const [BoxedLayer]) {}
+    fn update(&mut self, _previous_layers: &[BoxedLayer]) {}
 
     fn to_led_values(&self) -> &Vec<Rgb> {
         &self.leds

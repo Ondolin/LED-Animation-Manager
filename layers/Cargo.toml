@@ -12,3 +12,4 @@ prisma = { path = "../prisma/" }
 lazy_static = "1.4"
 angular-units = { version = "0.2.4", features = ["serde"] }
 uuid = { version = "1.1.0", features = ["v4", "serde"] }
+log = "0.4"

@@ -25,11 +25,11 @@ impl Color {
 #[typetag::serde]
 impl Layer for Color {
 
-    fn initialize(&mut self, _previous_layers: &*const [BoxedLayer]) {
+    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) {
         self.leds = vec![self.value; *STRIP_SIZE];
     }
 
-    fn update(&mut self, _previous_layers: &*const [BoxedLayer]) {}
+    fn update(&mut self, _previous_layers: &[BoxedLayer]) {}
 
     fn to_led_values(&self) -> &Vec<Rgb> {
         &self.leds

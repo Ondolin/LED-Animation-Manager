@@ -29,9 +29,9 @@ impl Wheel {
 
 #[typetag::serde]
 impl Layer for Wheel {
-    fn initialize(&mut self, _previous_layers: &*const [BoxedLayer]) {}
+    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) {}
 
-    fn update(&mut self, _previous_layers: & *const[BoxedLayer]) {
+    fn update(&mut self, _previous_layers: &[BoxedLayer]) {
         *self.current_color.hue_mut() += self.step_size;
         *self.current_color.hue_mut() %= Deg(360.0);
 
