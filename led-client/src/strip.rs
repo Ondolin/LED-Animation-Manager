@@ -1,5 +1,5 @@
 use layers::{BoxedLayer, Rgb};
-use ws2818_rgb_led_spi_driver::{adapter_spi::WS28xxSpiAdapter, adapter_gen::WS28xxAdapter};
+use ws2818_rgb_led_spi_driver::{adapter_spi::WS28xxSpiAdapter, adapter_gen::WS28xxAdapter, encoding::encode_rgb};
 
 /// This function can be used to write the top layer of the animation stack to the led strip
 pub fn write_layer(adapter: &mut WS28xxSpiAdapter, layer: &BoxedLayer) { 
@@ -16,7 +16,8 @@ fn flatten_color_vec(vector: &Vec<Rgb>) -> Vec<u8> {
     let mut flattened: Vec<u8> = Vec::new();
 
     for color in vector {
-        flattened.append(&mut vec![color.red(), color.green(), color.blue()]);
+        let color = encode_rgb(color.red(), color.green(), color.blue());
+        flattened.extend_from_slice(&color);
     }
 
     flattened
