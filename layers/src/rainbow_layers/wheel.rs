@@ -20,7 +20,7 @@ impl Wheel {
     pub fn new(step_size: Deg<f32>) -> Wheel {
         Wheel {
             uuid: Uuid::new_v4(),
-            leds: Default::default(),
+            leds: vec![Rgb::new(0, 0, 0); *STRIP_SIZE],
             step_size,
             current_color: Hsv::new(Deg(0.0), 1.0, 1.0)
         }
