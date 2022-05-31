@@ -27,6 +27,7 @@ async fn main() {
     env::var("FRAMES_PER_SECOND").expect("You need to specify the frames per second.")
         .parse::<u32>().expect("The frames per second have to be an Integer");
 
+
     let layers: Arc<Mutex<StripLayers>> = Arc::new(Mutex::new(StripLayers::new()));
 
     tokio::spawn(manage_stip(layers.clone()));

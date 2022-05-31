@@ -5,6 +5,8 @@ use ws2818_rgb_led_spi_driver::{adapter_spi::WS28xxSpiAdapter, adapter_gen::WS28
 pub fn write_layer(adapter: &mut WS28xxSpiAdapter, layer: &BoxedLayer) { 
     let spi_encoded_bits = flatten_color_vec(layer.to_led_values());
 
+    println!("{:?} :: {:?}", spi_encoded_bits.len(), spi_encoded_bits);
+
     adapter.write_encoded_rgb(&spi_encoded_bits).unwrap();
 
 }
