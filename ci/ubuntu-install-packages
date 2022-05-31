@@ -1,1 +1,4 @@
 #!/bin/sh
+
+apt-get update -q -y
+apt-get install cmake openssl libssl-dev pkg-config curl -q -y
