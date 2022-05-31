@@ -8,8 +8,11 @@ use actix_web_actors::ws;
 use dotenv::dotenv;
 use websocket::WebSocketConnection;
 
+use manipulate_layer::{add_wheel_layer, add_color_layer};
+
 mod websocket;
 mod state;
+mod manipulate_layer;
 
 async fn websocket_connection(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
     ws::start(WebSocketConnection::new(), &req, stream)
@@ -31,6 +34,8 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .service(web::resource("/live").route(web::get().to(websocket_connection)))
+            .service(add_color_layer)
+            .service(add_wheel_layer)
             .wrap(cors)
             .wrap(middleware::Logger::default())
 

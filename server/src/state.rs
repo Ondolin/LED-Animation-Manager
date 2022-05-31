@@ -6,7 +6,7 @@ use layers::BoxedLayer;
 
 #[derive(Serialize, Deserialize)]
 pub struct StripLayers {
-    layers: Vec<BoxedLayer>
+    pub layers: Vec<BoxedLayer>
 }
 
 impl StripLayers {

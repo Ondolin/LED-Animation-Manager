@@ -114,7 +114,12 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
 
         let mut adapter = WS28xxSpiAdapter::new("/dev/spidev0.0").expect("Could not access device /dev/spidev0.0.");
         
-        write_layer(&mut adapter, &strip.layers[amount_layers - 1]);
+        if amount_layers == 0 {
+            let no: Box<dyn layers::Layer> = Box::new(layers::NoAnimation::new());
+            write_layer(&mut adapter, &no);
+        } else {
+            write_layer(&mut adapter, &strip.layers[amount_layers - 1]);
+        }
 
         println!("{:?}", &strip.layers);
 

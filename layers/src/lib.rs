@@ -6,11 +6,17 @@ use std::env;
 
 use uuid::Uuid;
 
+pub mod none;
+pub use none::NoAnimation;
+
 pub mod static_layers;
 pub mod rainbow_layers;
 
+
 pub type BoxedLayer = Box<dyn Layer>;
 pub type Rgb = prisma::Rgb<u8>;
+
+pub use angular_units::Deg;
 
 #[typetag::serde(tag = "type")]
 pub trait Layer: Send + Debug {

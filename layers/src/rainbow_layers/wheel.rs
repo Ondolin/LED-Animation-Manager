@@ -7,7 +7,7 @@ use angular_units::Deg;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Wheel {
+pub struct Wheel {
     uuid: Uuid,
     step_size: Deg<f32>,
     #[serde(skip)]
@@ -17,7 +17,7 @@ struct Wheel {
 }
 
 impl Wheel {
-    fn new(step_size: Deg<f32>) -> Wheel {
+    pub fn new(step_size: Deg<f32>) -> Wheel {
         Wheel {
             uuid: Uuid::new_v4(),
             leds: Default::default(),
