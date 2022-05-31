@@ -1,5 +1,6 @@
 use std::{sync::Arc, env, ptr::slice_from_raw_parts};
 
+use diplomatic_bag::DiplomaticBag;
 use dotenv::dotenv;
 use fps_clock::FpsClock;
 use strip::write_layer;
@@ -89,6 +90,8 @@ async fn main() {
 async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
     let mut fps = FpsClock::new(env::var("FRAMES_PER_SECOND").unwrap().parse::<u32>().unwrap());
 
+    let mut adapter = DiplomaticBag::new(|_| WS28xxSpiAdapter::new("/dev/spidev0.0").expect("Could not access device /dev/spidev0.0."));
+
     loop {
 
        
@@ -112,16 +115,13 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
             }
         }
 
-        let mut adapter = WS28xxSpiAdapter::new("/dev/spidev0.0").expect("Could not access device /dev/spidev0.0.");
         
         if amount_layers == 0 {
             let no: Box<dyn layers::Layer> = Box::new(layers::NoAnimation::new());
-            write_layer(&mut adapter, &no);
+            adapter.as_mut().map(|_, mut adapter| write_layer(&mut adapter, &no));
         } else {
-            write_layer(&mut adapter, &strip.layers[amount_layers - 1]);
+            adapter.as_mut().map(|_, mut adapter| write_layer(&mut adapter, &strip.layers[amount_layers - 1]));
         }
-
-        println!("{:?}", &strip.layers);
 
         fps.tick();
         

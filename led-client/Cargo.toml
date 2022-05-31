@@ -24,3 +24,5 @@ log = "0.4"
 fps_clock = "2.0"
 ws2818-rgb-led-spi-driver = "2.0.0"
 lazy_static = "1.4"
+
+diplomatic-bag = "0.3.1"
