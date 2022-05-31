@@ -78,7 +78,7 @@ jobs:
           os: ubuntu-18.04
           rust: nightly
           target: armv7-unknown-linux-gnueabihf
-       steps:
+    steps:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
