@@ -50,15 +50,20 @@ impl WebSocketConnection {
 
 }
 
-impl Message for StripLayers {
+pub struct Dummy;
+
+impl Message for Dummy {
     type Result = Result<(), ()>;
 }
 
-impl Handler<StripLayers> for WebSocketConnection {
+impl Handler<Dummy> for WebSocketConnection {
     type Result = Result<(), ()>;
 
-    fn handle(&mut self, msg: StripLayers, ctx: &mut Self::Context) -> Self::Result {
-        ctx.binary(serde_json::to_vec(&msg).unwrap());
+    fn handle(&mut self, _msg: Dummy, ctx: &mut Self::Context) -> Self::Result {
+
+        let state = &*CURRENT_STATE.lock().unwrap();
+
+        ctx.binary(serde_json::to_vec(&state).unwrap());
 
         Ok(())
     }

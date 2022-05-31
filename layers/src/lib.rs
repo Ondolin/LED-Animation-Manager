@@ -19,7 +19,7 @@ pub type Rgb = prisma::Rgb<u8>;
 pub use angular_units::Deg;
 
 #[typetag::serde(tag = "type")]
-pub trait Layer: Send + Debug {
+pub trait Layer: Send + Sync + Debug {
     fn initialize(&mut self, _previous_layers: &*const [BoxedLayer]);
     fn update(&mut self, _previous_layers: &*const [BoxedLayer]);
     fn to_led_values(&self) -> &Vec<Rgb>;

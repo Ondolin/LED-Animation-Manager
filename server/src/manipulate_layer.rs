@@ -1,7 +1,7 @@
 use actix_web::{post, Responder, HttpResponse, web};
 use layers::{static_layers::Color, rainbow_layers::Wheel};
 
-use crate::state::CURRENT_STATE;
+use crate::state::{CURRENT_STATE, send_update};
 
 #[post("/layers/add/color")]
 pub async fn add_color_layer(color: web::Json<layers::Rgb>) -> impl Responder {
@@ -9,6 +9,8 @@ pub async fn add_color_layer(color: web::Json<layers::Rgb>) -> impl Responder {
     
     let mut state = CURRENT_STATE.lock().unwrap();
     state.layers.push(Box::new(Color::new(color.into_inner())));
+
+    send_update();
         
     HttpResponse::Ok()
 }
@@ -19,6 +21,8 @@ pub async fn add_wheel_layer() -> impl Responder {
 
     let mut state = CURRENT_STATE.lock().unwrap();
     state.layers.push(Box::new(Wheel::new(layers::Deg(2.0))));
+
+    send_update();
 
     HttpResponse::Ok()
 }
