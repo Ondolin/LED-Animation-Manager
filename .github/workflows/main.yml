@@ -1,0 +1,61 @@
+name: ARMV7 Build
+
+on: [push, pull_request]
+
+#~/.cargo/env
+          #~/.cargo/bin/
+          #~/.cargo/registry/index/
+          #~/.cargo/registry/cache/
+          #~/.cargo/git/db/
+
+jobs:
+  armv7_job:
+    # The host should always be Linux
+    runs-on: ubuntu-18.04
+    name: Build on ubuntu-18.04 armv7
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          
+      - uses: actions/checkout@v2.1.0
+      
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
+        with:
+          arch: armv7
+          distro: ubuntu18.04
+          
+          # Not required, but speeds up builds by storing container images in
+          # a GitHub package registry.
+          githubToken: ${{ github.token }}
+          
+          setup: |
+            mkdir -p ~/.cargo
+            mkdir -p ~/target
+          
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+            --volume "${HOME}/target:/home/runner/work/LED-Animation-Manager/LED-Animation-Manager/target"
+            
+          
+          install: |
+            apt-get update -q -y
+            apt-get install cmake openssl libssl-dev pkg-config curl -q -y
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            source $HOME/.cargo/env
+
+          run: |
+            source $HOME/.cargo/env
+            $HOME/.cargo/bin/cargo build --release
+            cp target/release/server /artifacts
+            cp target/release/led-client /artifacts
+            pwd
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: armv7_build
+          path: artifacts/
