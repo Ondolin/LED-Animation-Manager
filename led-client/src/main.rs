@@ -54,7 +54,6 @@ async fn main() {
 
         if let Ok(new_data) = serde_json::from_slice::<StripLayers>(&data) {
             let mut layers = layers.lock().await;
-            println!("{:?}", layers);
             
             let mut new_layers: StripLayers = StripLayers::new();
 
@@ -77,6 +76,9 @@ async fn main() {
 
             }
 
+            
+            println!("New Layer: {:?}", new_layers);
+
             *layers = new_layers;
 
         } else {
@@ -94,6 +96,7 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
 
     loop {
 
+        fps.tick();
        
         let mut strip = strip.lock().await;
 
@@ -117,13 +120,12 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
 
         
         if amount_layers == 0 {
+            println!("No layer pesent");
             let no: Box<dyn layers::Layer> = Box::new(layers::NoAnimation::new());
             adapter.as_mut().map(|_, mut adapter| write_layer(&mut adapter, &no));
         } else {
             adapter.as_mut().map(|_, mut adapter| write_layer(&mut adapter, &strip.layers[amount_layers - 1]));
         }
-
-        fps.tick();
         
     }
 
