@@ -78,7 +78,7 @@ async fn main() {
             }
 
             
-            println!("New Layer: {:?}", new_layers);
+            log::info!("New Layer: {:?}", new_layers);
 
             *layers = new_layers;
 
