@@ -1,19 +1,17 @@
 use std::sync::Mutex;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use layers::Layer;
+use layers::BoxedLayer;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct StripLayers {
-    layers: Vec<Layer>
+    layers: Vec<BoxedLayer>
 }
 
 impl StripLayers {
     pub fn new() -> Self {
-        Self {
-            layers: Vec::new()
-        }
+        Self { layers: Vec::new() }
     }
 }
 

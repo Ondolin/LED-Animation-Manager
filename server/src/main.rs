@@ -19,6 +19,9 @@ async fn websocket_connection(req: HttpRequest, stream: web::Payload) -> Result<
 async fn main() -> std::io::Result<()> {
 
     dotenv().ok();
+
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
     check_enviroment_variables();
 
     log::info!("Starting HTTP server at port {}", env::var("SERVER_PORT").unwrap());

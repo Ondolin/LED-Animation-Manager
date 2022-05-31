@@ -2,5 +2,7 @@
 
 members = [
     "layers",
-    "server"
+    "server",
+    "led-client",
+    "prisma"
 ]
