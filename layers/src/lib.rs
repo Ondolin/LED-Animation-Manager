@@ -21,6 +21,8 @@ pub trait Layer: Send + Debug {
     // fn delete(&mut self, _previous_layers: Vec<Box<dyn Layer>>) { unimplemented!() }
 }
 
+pub fn initialize() { let _ = *STRIP_SIZE; }
+
 lazy_static! {
-    pub(crate) static ref STRIP_SIZE: usize = env::var("STRIP_SIZE").expect("Your need to specify a STRIP_SIZE").parse::<usize>().expect("The Strip size must be an integer");
+    pub static ref STRIP_SIZE: usize = env::var("STRIP_SIZE").expect("Your need to specify a STRIP_SIZE").parse::<usize>().expect("The Strip size must be an integer");
 }

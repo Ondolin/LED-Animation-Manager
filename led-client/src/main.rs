@@ -19,6 +19,8 @@ async fn main() {
 
     dotenv().ok();
 
+    layers::initialize();
+
     env::var("SERVER_HOST").expect("You need to specify a server host.");
     env::var("SERVER_PORT").expect("You need to specify a server port.");
     env::var("FRAMES_PER_SECOND").expect("You need to specify the frames per second.")
@@ -55,7 +57,7 @@ async fn main() {
             
             let mut new_layers: StripLayers = StripLayers::new();
 
-            'outer: for new_layer in new_data.layers {
+            'outer: for mut new_layer in new_data.layers {
                 
                 let uuid = new_layer.uuid();
 
@@ -69,6 +71,7 @@ async fn main() {
                     }
                 }
 
+                new_layer.initialize(&slice_from_raw_parts(new_layers.layers.as_ptr(), new_layers.layers.len()));
                 new_layers.push_layer(new_layer);
 
             }
@@ -109,9 +112,9 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
             }
         }
 
-        // let mut adapter = WS28xxSpiAdapter::new("/dev/spidev0.0").expect("Could not access device /dev/spidev0.0.");
+        let mut adapter = WS28xxSpiAdapter::new("/dev/spidev0.0").expect("Could not access device /dev/spidev0.0.");
         
-        // write_layer(&mut adapter, &strip.layers[amount_layers - 1]);
+        write_layer(&mut adapter, &strip.layers[amount_layers - 1]);
 
         println!("{:?}", &strip.layers);
 
