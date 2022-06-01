@@ -120,25 +120,55 @@ jobs:
       run: ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }}
 
 
-    - name: Strip release binary (linux and macos)
-      if: matrix.build == 'linux' || matrix.build == 'macos'
-      run: strip "target/${{ matrix.target }}/release/rg"
+    # - name: Strip release binary (linux and macos)
+    #   if: matrix.build == 'linux' || matrix.build == 'macos'
+    #   run: strip "target/${{ matrix.target }}/release/rg"
 
-    - name: Strip release binary (arm)
-      if: matrix.build == 'linux-arm'
+    # - name: Strip release binary (arm)
+    #   if: matrix.build == 'linux-arm'
+    #   run: |
+    #     docker run --rm -v \
+    #       "$PWD/target:/target:Z" \
+    #       rustembedded/cross:armv7-unknown-linux-gnueabihf \
+    #       armv7-linux-gnueabihf-strip \
+    #       /target/armv7-unknown-linux-gnueabihf/release/
+
+    - name: Build archive server
+      shell: bash
       run: |
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
-          rustembedded/cross:armv7-unknown-linux-gnueabihf \
-          armv7-linux-gnueabihf-strip \
-          /target/armv7-unknown-linux-gnueabihf/release/
+        outdir="$(ci/cargo-out-dir "${{ env.TARGET_DIR }}")"
+        staging="LED-Animation-manager-${{ needs.create-release.outputs.rg_version }}-server-${{ matrix.target }}"
 
-    - name: Upload release archive
+        cp "target/${{ matrix.target }}/release/server" "$staging/"
+        tar czf "$staging.tar.gz" "$staging"
+        echo "ASSET_SERVER=$staging.tar.gz" >> $GITHUB_ENV
+
+    - name: Build archive led-client
+      shell: bash
+      run: |
+        outdir="$(ci/cargo-out-dir "${{ env.TARGET_DIR }}")"
+        staging="LED-Animation-manager-${{ needs.create-release.outputs.rg_version }}-LED_Client-${{ matrix.target }}"
+
+        cp "target/${{ matrix.target }}/release/led-client" "$staging/"
+        tar czf "$staging.tar.gz" "$staging"
+        echo "ASSET_LED_CLIENT=$staging.tar.gz" >> $GITHUB_ENV
+
+    - name: Upload release archive server
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ${{ env.ASSET }}
-        asset_name: ${{ env.ASSET }}
+        asset_path: ${{ env.ASSET_SERVER }}
+        asset_name: ${{ env.ASSET_SERVER }}
+        asset_content_type: application/octet-stream
+
+    - name: Upload release archive client
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ${{ env.ASSET_LED_CLIENT }}
+        asset_name: ${{ env.ASSET_LED_CLIENT }}
         asset_content_type: application/octet-stream
