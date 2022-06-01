@@ -19,6 +19,7 @@ mod strip;
 async fn main() {
 
     dotenv().ok();
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     layers::initialize();
 
@@ -50,42 +51,45 @@ async fn main() {
 
     read.for_each(|message| async {
 
-        let data = message.unwrap().into_data();
+        if !(message.is_err() || message.as_ref().unwrap().is_ping() || message.as_ref().unwrap().is_pong()) {
+            let data = message.unwrap().into_data();
 
-
-        if let Ok(new_data) = serde_json::from_slice::<StripLayers>(&data) {
-            let mut layers = layers.lock().await;
-            
-            let mut new_layers: StripLayers = StripLayers::new();
-
-            'outer: for mut new_layer in new_data.layers {
+            if let Ok(new_data) = serde_json::from_slice::<StripLayers>(&data) {
+                let mut layers = layers.lock().await;
                 
-                let uuid = new_layer.uuid();
+                let mut new_layers: StripLayers = StripLayers::new();
 
-                for (index, old_layer) in layers.layers.iter().enumerate() {
-                    if uuid == old_layer.uuid() {
+                'outer: for mut new_layer in new_data.layers {
+                    
+                    let uuid = new_layer.uuid();
 
-                        let old_layer = layers.layers.remove(index);
+                    for (index, old_layer) in layers.layers.iter().enumerate() {
+                        if uuid == old_layer.uuid() {
 
-                        new_layers.push_layer(old_layer);
-                        continue 'outer;
+                            let old_layer = layers.layers.remove(index);
+
+                            new_layers.push_layer(old_layer);
+                            continue 'outer;
+                        }
                     }
+
+                    new_layer.initialize(&new_layers.layers);
+                    new_layers.push_layer(new_layer);
+
                 }
 
-                new_layer.initialize(&new_layers.layers);
-                new_layers.push_layer(new_layer);
+                
+                log::info!("New Layer: {:?}", new_layers);
 
+                *layers = new_layers;
+
+            } else {
+                log::warn!("Could not parse data: {:?}", data);
             }
 
-            
-            log::info!("New Layer: {:?}", new_layers);
-
-            *layers = new_layers;
-
-        } else {
-            log::warn!("Could not parse data: {:?}", data);
         }
 
+        
     }).await
 
 }
@@ -106,14 +110,16 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
         };
 
         {
-            for i in 0..amount_layers {
+            if amount_layers > 0 {
+                for i in 0..=amount_layers {
 
-                if let Some((new_layer, previous_layers)) = strip.layers[0..i].split_last_mut() {
-                    new_layer.update(previous_layers);
-                } else {
-                    strip.layers[i].update(&[]);
+                    if let Some((new_layer, previous_layers)) = strip.layers[0..i].split_last_mut() {
+                        new_layer.update(previous_layers);
+                    } else {
+                        strip.layers[i].update(&[]);
+                    }
+
                 }
-
             }
         }
 

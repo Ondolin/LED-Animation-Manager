@@ -52,6 +52,7 @@ impl Layer for Crop {
 
         let mut leds: Vec<Rgb> = Vec::new();
 
+
         leds.extend_from_slice(&alpha_level[0..self.left]);
         leds.extend_from_slice(&parital_hidden_level[self.left..self.right]);
         leds.extend_from_slice(&alpha_level[self.right..strip_size]);

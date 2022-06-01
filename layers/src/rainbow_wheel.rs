@@ -24,7 +24,7 @@ impl RainbowWheel {
 
 impl Animation for RainbowWheel {
     fn initialize(&mut self, _strip: Arc<Mutex<Strip>>) {
-        self.current_color = self.initial_color;
+        self.current_color  self.initial_color;
     }
 
     fn update(&mut self, strip: Arc<Mutex<Strip>>) {

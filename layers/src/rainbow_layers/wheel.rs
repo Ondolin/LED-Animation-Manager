@@ -29,9 +29,10 @@ impl Wheel {
 
 #[typetag::serde]
 impl Layer for Wheel {
-    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) { self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE] }
+    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) { self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE]; self.current_color = Hsv::new(Deg(0.0), 1.0, 1.0) }
 
     fn update(&mut self, _previous_layers: &[BoxedLayer]) {
+
         *self.current_color.hue_mut() += self.step_size;
         *self.current_color.hue_mut() %= Deg(360.0);
 

@@ -8,7 +8,7 @@ use actix_web_actors::ws;
 use dotenv::dotenv;
 use websocket::WebSocketConnection;
 
-use manipulate_layer::{add_wheel_layer, add_color_layer};
+use manipulate_layer::{add_wheel_layer, add_color_layer, add_crop_filter_layer};
 
 mod websocket;
 mod state;
@@ -36,6 +36,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::resource("/live").route(web::get().to(websocket_connection)))
             .service(add_color_layer)
             .service(add_wheel_layer)
+            .service(add_crop_filter_layer)
             .wrap(cors)
             .wrap(middleware::Logger::default())
 
