@@ -1,3 +1,5 @@
+This is a forked version of the original crate located at [this reposotory](https://github.com/tylerreisinger/prisma)
+
 Prisma - The Rust Color Library
 ===============================
 [![Build Status](https://travis-ci.org/tylerreisinger/prisma.svg?branch=master)](https://travis-ci.org/tylerreisinger/prisma)
