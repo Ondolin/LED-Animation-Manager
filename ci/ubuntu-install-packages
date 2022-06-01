@@ -6,4 +6,4 @@ if ! command -V sudo; then
 fi
 
 sudo apt-get update -q -y
-sudo apt-get install cmake openssl libssl-dev pkg-config build-essential curl -q -y
+sudo apt-get install cmake openssl libssl-dev pkg-config build-essential curl pcre2 -q -y
