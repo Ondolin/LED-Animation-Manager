@@ -20,6 +20,7 @@ where
 {
     fn clone(&self) -> Self {
         unsafe {
+            #[allow(deprecated)]
             let mut new_arr: [T; 9] = mem::uninitialized();
             new_arr.clone_from_slice(&self.m);
 

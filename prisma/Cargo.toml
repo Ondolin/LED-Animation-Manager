@@ -13,10 +13,6 @@ serde = { version = "1.0", features = ["derive"] }
 [features]
 default = ["approx"]
 
-[dev.dependencies]
-bencher = "0.1.2"
-approx = "0.3.0"
-
 [package.metadata.docs.rs]
 rustdoc-args = [
     "--html-in-header",
