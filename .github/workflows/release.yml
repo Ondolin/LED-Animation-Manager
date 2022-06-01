@@ -101,6 +101,16 @@ jobs:
         profile: minimal
         override: true
         target: ${{ matrix.target }}
+        
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Use Cross
       shell: bash
