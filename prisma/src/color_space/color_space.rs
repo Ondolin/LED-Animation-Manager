@@ -327,30 +327,30 @@ macro_rules! impl_color_space_body {
     () => {
         type Encoding = E;
         fn red_primary(&self) -> RgbPrimary<T> {
-        self.red_primary.clone()
+            self.red_primary.clone()
         }
         fn green_primary(&self) -> RgbPrimary<T> {
-        self.green_primary.clone()
+            self.green_primary.clone()
         }
         fn blue_primary(&self) -> RgbPrimary<T> {
-        self.blue_primary.clone()
+            self.blue_primary.clone()
         }
         fn white_point(&self) -> Xyz<T> {
-        self.white_point.clone()
+            self.white_point.clone()
         }
         fn encoding(&self) -> Self::Encoding {
             self.encoding.clone()
         }
         fn get_xyz_transform(&self) -> Matrix3<T> {
-        self.xyz_transform.clone()
+            self.xyz_transform.clone()
         }
         fn get_inverse_xyz_transform(&self) -> Matrix3<T> {
-        self.inv_transform.clone()
+            self.inv_transform.clone()
         }
         fn apply_transform(&self, vec: (T, T, T)) -> (T, T, T) {
-        self.xyz_transform.transform_vector(vec)
+            self.xyz_transform.transform_vector(vec)
         }
-    }
+    };
 }
 
 macro_rules! impl_color_space {
@@ -383,19 +383,23 @@ macro_rules! impl_convert_xyz_body {
     ($typ:ty) => {
         fn convert_to_xyz(&self, color: &EncodedColor<Rgb<T>, EIn>) -> Self::OutputColor {
             let linear_color = color.clone().decode();
-            let (x, y, z) = self.get_xyz_transform().transform_vector(linear_color.to_tuple());
+            let (x, y, z) = self
+                .get_xyz_transform()
+                .transform_vector(linear_color.to_tuple());
             Xyz::new(x, y, z)
         }
-    }
+    };
 }
 macro_rules! impl_convert_xyza_body {
     ($typ:ty) => {
         fn convert_to_xyz(&self, color: &EncodedColor<Rgba<T>, EIn>) -> Self::OutputColor {
             let linear_color = color.clone().decode();
-            let (x, y, z) = self.get_xyz_transform().transform_vector((**linear_color).to_tuple());
+            let (x, y, z) = self
+                .get_xyz_transform()
+                .transform_vector((**linear_color).to_tuple());
             Xyza::new(Xyz::new(x, y, z), color.alpha())
         }
-    }
+    };
 }
 
 macro_rules! impl_convert_xyz {

@@ -214,7 +214,7 @@ where
     T: PosNormalChannelScalar + Float,
 {
     impl_color_as_slice!(T);
-    impl_color_from_slice_square!(Rgi<T> {red:PosNormalBoundedChannel - 0, 
+    impl_color_from_slice_square!(Rgi<T> {red:PosNormalBoundedChannel - 0,
         green:PosNormalBoundedChannel - 1, intensity:PosNormalBoundedChannel - 2});
 }
 

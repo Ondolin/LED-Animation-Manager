@@ -13,7 +13,7 @@ macro_rules! impl_channel_clamp {
                 self.clone()
             }
         }
-    }
+    };
 }
 
 macro_rules! impl_abs_diff_eq {
@@ -62,7 +62,7 @@ macro_rules! impl_color_as_slice {
                 slice::from_raw_parts(ptr, Self::num_channels() as usize)
             }
         }
-    }
+    };
 }
 
 macro_rules! impl_color_from_slice_square {
@@ -213,11 +213,12 @@ macro_rules! impl_color_get_hue_angular {
     ($name:ident) => {
         type InternalAngle = A;
         fn get_hue<U>(&self) -> U
-            where U: Angle<Scalar = A::Scalar> + FromAngle<A>
+        where
+            U: Angle<Scalar = A::Scalar> + FromAngle<A>,
         {
             <A as IntoAngle<U>>::into_angle(self.hue.0.clone())
         }
-    }
+    };
 }
 
 macro_rules! impl_color_homogeneous_color_square {

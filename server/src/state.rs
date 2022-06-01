@@ -8,7 +8,7 @@ use crate::websocket::CONNECTED_CLIENTS;
 
 #[derive(Serialize, Deserialize)]
 pub struct StripLayers {
-    pub layers: Vec<BoxedLayer>
+    pub layers: Vec<BoxedLayer>,
 }
 
 impl StripLayers {
@@ -27,7 +27,7 @@ pub fn send_update() {
     for (_uuid, addr) in recipients.iter_mut() {
         match addr.try_send(crate::websocket::Dummy) {
             Ok(_) => log::info!("a"),
-            Err(e) => log::error!("{}", e)
+            Err(e) => log::error!("{}", e),
         }
     }
 }

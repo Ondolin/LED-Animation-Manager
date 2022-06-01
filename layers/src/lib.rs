@@ -1,18 +1,17 @@
 #[macro_use]
 extern crate lazy_static;
 
-use std::fmt::Debug;
 use std::env;
+use std::fmt::Debug;
 
 use uuid::Uuid;
 
 pub mod none;
 pub use none::NoAnimation;
 
-pub mod static_layers;
-pub mod rainbow_layers;
 pub mod filter;
-
+pub mod rainbow_layers;
+pub mod static_layers;
 
 pub type BoxedLayer = Box<dyn Layer>;
 pub type Rgb = prisma::Rgb<u8>;
@@ -28,8 +27,13 @@ pub trait Layer: Send + Sync + Debug {
     // fn delete(&mut self, _previous_layers: Vec<Box<dyn Layer>>) { unimplemented!() }
 }
 
-pub fn initialize() { let _ = *STRIP_SIZE; }
+pub fn initialize() {
+    let _ = *STRIP_SIZE;
+}
 
 lazy_static! {
-    pub static ref STRIP_SIZE: usize = env::var("STRIP_SIZE").expect("Your need to specify a STRIP_SIZE").parse::<usize>().expect("The Strip size must be an integer");
+    pub static ref STRIP_SIZE: usize = env::var("STRIP_SIZE")
+        .expect("Your need to specify a STRIP_SIZE")
+        .parse::<usize>()
+        .expect("The Strip size must be an integer");
 }

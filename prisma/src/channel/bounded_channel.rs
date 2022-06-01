@@ -17,7 +17,7 @@ pub struct PosNormalChannelTag;
 /// A tag uniquely identifying a NormalChannel
 pub struct NormalChannelTag;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// A channel bounded between 0 and a maximum value
 #[repr(transparent)]

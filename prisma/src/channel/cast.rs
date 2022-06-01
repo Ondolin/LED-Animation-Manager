@@ -23,7 +23,7 @@ macro_rules! impl_cast_with_rescale_flt_to_int {
             let scaled_self = (self - (min as $from)) / range;
             scaled_self.cast()
         }
-    }
+    };
 }
 
 macro_rules! impl_cast_with_rescale_int_to_flt {
@@ -34,7 +34,7 @@ macro_rules! impl_cast_with_rescale_int_to_flt {
             let range = (max - min) as $to;
             out * range + (min as $to)
         }
-    }
+    };
 }
 
 impl ChannelFormatCast<u8> for u8 {

@@ -1,6 +1,5 @@
 //! The CIELAB perceptually uniform device-independent color space
 #![allow(clippy::many_single_char_names)]
-
 #![allow(non_snake_case)]
 use crate::channel::{
     ChannelCast, ChannelFormatCast, ColorChannel, FreeChannel, FreeChannelScalar, PosFreeChannel,

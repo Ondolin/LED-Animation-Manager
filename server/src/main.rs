@@ -1,35 +1,40 @@
 #[macro_use]
 extern crate lazy_static;
 
-use std::env;
 use actix_cors::Cors;
-use actix_web::{HttpServer, App, middleware, web, HttpRequest, HttpResponse, Error};
+use actix_web::{middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use actix_web_actors::ws;
 use dotenv::dotenv;
+use std::env;
 use websocket::WebSocketConnection;
 
-use manipulate_layer::{add_wheel_layer, add_color_layer, add_crop_filter_layer};
+use manipulate_layer::{add_color_layer, add_crop_filter_layer, add_wheel_layer};
 
-mod websocket;
-mod state;
 mod manipulate_layer;
+mod state;
+mod websocket;
 
-async fn websocket_connection(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
+async fn websocket_connection(
+    req: HttpRequest,
+    stream: web::Payload,
+) -> Result<HttpResponse, Error> {
     ws::start(WebSocketConnection::new(), &req, stream)
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
     dotenv().ok();
 
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     check_enviroment_variables();
 
-    log::info!("Starting HTTP server at port {}", env::var("SERVER_PORT").unwrap());
+    log::info!(
+        "Starting HTTP server at port {}",
+        env::var("SERVER_PORT").unwrap()
+    );
 
-    HttpServer::new(move || { 
+    HttpServer::new(move || {
         let cors = Cors::permissive();
 
         App::new()
@@ -39,15 +44,10 @@ async fn main() -> std::io::Result<()> {
             .service(add_crop_filter_layer)
             .wrap(cors)
             .wrap(middleware::Logger::default())
-
     })
-    .bind(format!(
-            "0.0.0.0:{}",
-            env::var("SERVER_PORT").unwrap()
-    ))?
+    .bind(format!("0.0.0.0:{}", env::var("SERVER_PORT").unwrap()))?
     .run()
     .await
-
 }
 
 fn check_enviroment_variables() {

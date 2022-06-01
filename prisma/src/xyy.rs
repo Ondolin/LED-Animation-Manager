@@ -237,7 +237,7 @@ where
     T: FreeChannelScalar + PosNormalChannelScalar + num_traits::Float,
 {
     impl_color_as_slice!(T);
-    impl_color_from_slice_square!(XyY<T> {x:PosNormalBoundedChannel - 0, 
+    impl_color_from_slice_square!(XyY<T> {x:PosNormalBoundedChannel - 0,
         y:PosNormalBoundedChannel - 1, Y:FreeChannel - 2});
 }
 

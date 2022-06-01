@@ -1,7 +1,7 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{Rgb, Layer, BoxedLayer, STRIP_SIZE};
+use crate::{BoxedLayer, Layer, Rgb, STRIP_SIZE};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Crop {
@@ -9,26 +9,23 @@ pub struct Crop {
     left: usize,
     right: usize,
     #[serde(skip)]
-    leds: Vec<Rgb>
+    leds: Vec<Rgb>,
 }
 
 impl Crop {
     pub fn new(left: usize, right: usize) -> Crop {
-
-        Crop { 
+        Crop {
             uuid: Uuid::new_v4(),
             left,
             right,
-            leds: Vec::new()
+            leds: Vec::new(),
         }
     }
 }
 
 #[typetag::serde]
 impl Layer for Crop {
-
     fn initialize(&mut self, previous_layers: &[BoxedLayer]) {
-
         self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
 
         if self.left as usize > *STRIP_SIZE {
@@ -43,7 +40,6 @@ impl Layer for Crop {
     }
 
     fn update(&mut self, previous_layers: &[BoxedLayer]) {
-
         let amount_layers = previous_layers.len();
         let strip_size: usize = *STRIP_SIZE;
 
@@ -52,13 +48,11 @@ impl Layer for Crop {
 
         let mut leds: Vec<Rgb> = Vec::new();
 
-
         leds.extend_from_slice(&alpha_level[0..self.left]);
         leds.extend_from_slice(&parital_hidden_level[self.left..self.right]);
         leds.extend_from_slice(&alpha_level[self.right..strip_size]);
 
         self.leds = leds;
-
     }
 
     fn to_led_values(&self) -> &Vec<Rgb> {

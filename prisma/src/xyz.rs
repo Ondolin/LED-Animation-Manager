@@ -285,5 +285,4 @@ mod test {
         assert_relative_eq!(c1.color_cast(), c1);
         assert_relative_eq!(c1.color_cast(), Xyz::new(0.5f32, 1.0, 0.8));
     }
-
 }

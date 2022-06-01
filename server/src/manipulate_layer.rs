@@ -1,19 +1,19 @@
-use actix_web::{post, Responder, HttpResponse, web};
-use layers::{static_layers::Color, rainbow_layers::Wheel, filter::Crop};
+use actix_web::{post, web, HttpResponse, Responder};
+use layers::{filter::Crop, rainbow_layers::Wheel, static_layers::Color};
 
-use crate::state::{CURRENT_STATE, send_update};
+use crate::state::{send_update, CURRENT_STATE};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[post("/layers/add/color")]
 pub async fn add_color_layer(color: web::Json<layers::Rgb>) -> impl Responder {
-    log::info!("Added color layer with color: {}", color );
-    
+    log::info!("Added color layer with color: {}", color);
+
     let mut state = CURRENT_STATE.lock().unwrap();
     state.layers.push(Box::new(Color::new(color.into_inner())));
 
     send_update();
-        
+
     HttpResponse::Ok()
 }
 
@@ -32,7 +32,7 @@ pub async fn add_wheel_layer() -> impl Responder {
 #[derive(Serialize, Deserialize)]
 pub struct CropFilter {
     left: usize,
-    right: usize
+    right: usize,
 }
 
 // TODO check if amount of layers and parameter are right
@@ -41,10 +41,11 @@ pub async fn add_crop_filter_layer(crop_filter: web::Json<CropFilter>) -> impl R
     log::info!("Added crop layer.");
 
     let mut state = CURRENT_STATE.lock().unwrap();
-    state.layers.push(Box::new(Crop::new(crop_filter.left, crop_filter.right)));
+    state
+        .layers
+        .push(Box::new(Crop::new(crop_filter.left, crop_filter.right)));
 
     send_update();
 
     HttpResponse::Ok()
-
 }

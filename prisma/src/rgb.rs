@@ -24,7 +24,7 @@ use std::fmt;
 use std::mem;
 use std::slice;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Eq, Ord, Hash, Serialize, Deserialize)]
@@ -205,7 +205,7 @@ where
     T: PosNormalChannelScalar,
 {
     impl_color_as_slice!(T);
-    impl_color_from_slice_square!(Rgb<T> {red:PosNormalBoundedChannel - 0, 
+    impl_color_from_slice_square!(Rgb<T> {red:PosNormalBoundedChannel - 0,
         green:PosNormalBoundedChannel - 1, blue:PosNormalBoundedChannel - 2});
 }
 

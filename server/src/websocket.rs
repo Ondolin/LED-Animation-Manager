@@ -1,4 +1,4 @@
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
 
 use std::{collections::HashMap, sync::Mutex};
 
@@ -13,19 +13,20 @@ const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
 const CLIENT_TIMEOUT: Duration = Duration::from_secs(5);
 
 lazy_static! {
-    pub static ref CONNECTED_CLIENTS: Mutex<HashMap<Uuid, actix::Addr<WebSocketConnection>>> = Mutex::new(HashMap::new());
+    pub static ref CONNECTED_CLIENTS: Mutex<HashMap<Uuid, actix::Addr<WebSocketConnection>>> =
+        Mutex::new(HashMap::new());
 }
 
 pub struct WebSocketConnection {
     hb: Instant,
-    id: Uuid
+    id: Uuid,
 }
 
 impl WebSocketConnection {
     pub fn new() -> Self {
         Self {
             hb: Instant::now(),
-            id: Uuid::new_v4()
+            id: Uuid::new_v4(),
         }
     }
 
@@ -47,7 +48,6 @@ impl WebSocketConnection {
             ctx.ping(b"");
         });
     }
-
 }
 
 pub struct Dummy;
@@ -60,7 +60,6 @@ impl Handler<Dummy> for WebSocketConnection {
     type Result = Result<(), ()>;
 
     fn handle(&mut self, _msg: Dummy, ctx: &mut Self::Context) -> Self::Result {
-
         let state = &*CURRENT_STATE.lock().unwrap();
 
         ctx.binary(serde_json::to_vec(&state).unwrap());
@@ -79,22 +78,17 @@ impl Actor for WebSocketConnection {
 
         // send current state at the beginning of the connection
         {
-
             let state = CURRENT_STATE.lock().unwrap();
 
             ctx.binary(serde_json::to_vec(&*state).unwrap());
-
         }
 
         // add new client to connected clients array
         {
-
             let mut address_array = CONNECTED_CLIENTS.lock().unwrap();
 
             address_array.insert(self.id, ctx.address());
-
         }
-
     }
 
     fn stopped(&mut self, _ctx: &mut Self::Context) {
@@ -102,7 +96,7 @@ impl Actor for WebSocketConnection {
 
         match address_array.remove(&self.id) {
             Some(_) => log::info!("Client disconnected."),
-            None => log::error!("Cound not disconnect client!")
+            None => log::error!("Cound not disconnect client!"),
         }
     }
 }
