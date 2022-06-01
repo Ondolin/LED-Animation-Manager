@@ -45,7 +45,7 @@ async fn main() {
 
     let (ws_stream, _) = connect_async(&url)
         .await
-        .expect(format!("Could not connect to websocket on url: {:?}", url).as_str());
+        .unwrap_or_else(|_| panic!("Could not connect to websocket on url: {:?}", url));
 
     let (mut write, read) = ws_stream.split();
 
@@ -137,11 +137,11 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
             let no: Box<dyn layers::Layer> = Box::new(layers::NoAnimation::new());
             adapter
                 .as_mut()
-                .map(|_, mut adapter| write_layer(&mut adapter, &no));
+                .map(|_, adapter| write_layer(adapter, &no));
         } else {
             adapter
                 .as_mut()
-                .map(|_, mut adapter| write_layer(&mut adapter, &strip.layers[amount_layers - 1]));
+                .map(|_, adapter| write_layer(adapter, &strip.layers[amount_layers - 1]));
         }
     }
 }

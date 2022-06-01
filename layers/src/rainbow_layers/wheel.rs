@@ -38,7 +38,7 @@ impl Layer for Wheel {
         *self.current_color.hue_mut() += self.step_size;
         *self.current_color.hue_mut() %= Deg(360.0);
 
-        let mut value = self.current_color.clone();
+        let mut value = self.current_color;
 
         for i in 0..*STRIP_SIZE {
             let rgb: Rgb = prisma::Rgb::from_color(&value).color_cast();
