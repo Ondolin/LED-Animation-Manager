@@ -138,6 +138,8 @@ jobs:
       run: |
         outdir="$(ci/cargo-out-dir "${{ env.TARGET_DIR }}")"
         staging="LED-Animation-manager-${{ needs.create-release.outputs.rg_version }}-server-${{ matrix.target }}"
+  
+        mkdir "$staging"
 
         cp "target/${{ matrix.target }}/release/server" "$staging/"
         tar czf "$staging.tar.gz" "$staging"
@@ -148,6 +150,8 @@ jobs:
       run: |
         outdir="$(ci/cargo-out-dir "${{ env.TARGET_DIR }}")"
         staging="LED-Animation-manager-${{ needs.create-release.outputs.rg_version }}-LED_Client-${{ matrix.target }}"
+
+        mkdir "$staging"
 
         cp "target/${{ matrix.target }}/release/led-client" "$staging/"
         tar czf "$staging.tar.gz" "$staging"
