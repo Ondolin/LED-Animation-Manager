@@ -2,14 +2,33 @@
 extern crate lazy_static;
 
 use actix_cors::Cors;
-use actix_web::{middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{
+    dev::{Service, ServiceRequest, ServiceResponse, Transform},
+    middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer,
+};
 use actix_web_actors::ws;
 use dotenv::dotenv;
-use std::env;
+use std::{
+    env,
+    future::{self, Ready},
+};
 use websocket::WebSocketConnection;
 
-use manipulate_layer::{add_color_layer, add_crop_filter_layer, add_wheel_layer};
+use manipulate_layer::{
+    add_color_layer, add_crop_filter_layer, add_timer_layer, add_wheel_layer, ColorProp,
+    ErrorResponse,
+};
 
+use utoipa_swagger_ui::SwaggerUi;
+
+use utoipa::{
+    openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
+    Modify, OpenApi,
+};
+
+use futures::future::LocalBoxFuture;
+
+mod auth;
 mod manipulate_layer;
 mod state;
 mod websocket;
@@ -29,6 +48,35 @@ async fn main() -> std::io::Result<()> {
 
     check_enviroment_variables();
 
+    #[derive(OpenApi)]
+    #[openapi(
+        handlers(
+            manipulate_layer::add_wheel_layer,
+            manipulate_layer::add_color_layer,
+        ),
+        components(ColorProp, ErrorResponse),
+        tags(
+            (name = "LED-Animation-Manager Server", description = "A server to distribute LED-Strip animations.")
+        ),
+        modifiers(&SecurityAddon)
+    )]
+    struct ApiDoc;
+
+    struct SecurityAddon;
+
+    impl Modify for SecurityAddon {
+        fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+            let components = openapi.components.as_mut().unwrap(); // we can unwrap safely since there already is components registered.
+            components.add_security_scheme(
+                "api_key",
+                SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("led_api_key"))),
+            )
+        }
+    }
+
+    // Make instance variable of ApiDoc so all worker threads gets the same instance.
+    let openapi = ApiDoc::openapi();
+
     log::info!(
         "Starting HTTP server at port {}",
         env::var("SERVER_PORT").unwrap()
@@ -39,9 +87,10 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .service(web::resource("/live").route(web::get().to(websocket_connection)))
-            .service(add_color_layer)
-            .service(add_wheel_layer)
-            .service(add_crop_filter_layer)
+            .configure(manipulate_layer::configure())
+            .service(
+                SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-doc/openapi.json", openapi.clone()),
+            )
             .wrap(cors)
             .wrap(middleware::Logger::default())
     })
@@ -51,5 +100,6 @@ async fn main() -> std::io::Result<()> {
 }
 
 fn check_enviroment_variables() {
-    env::var("SERVER_PORT").expect("You need to specity a SERVER_PORT in an .env file.");
+    env::var("SERVER_PORT").expect("You need to specify a SERVER_PORT in an .env file.");
+    env::var("API_KEY").expect("You need to specify an API_KEY in the .env file");
 }
