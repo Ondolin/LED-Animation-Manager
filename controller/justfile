@@ -1,0 +1,2 @@
+update-api:
+    openapi-generator generate -i ../server/api/openapi.yaml -g dart -o lib/api
