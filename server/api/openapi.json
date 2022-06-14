@@ -1,0 +1,442 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "server",
+    "description": "",
+    "contact": {
+      "name": "",
+      "email": ""
+    },
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/layer": {
+      "delete": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "delete_by_uuid",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Layer deleted successfully."
+          },
+          "400": {
+            "description": "Could not parse a uuid from request, or there is no layer corresponding to your uuid."
+          },
+          "401": {
+            "description": "Unauthoriesed to deleat this layer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/layers/add/color": {
+      "post": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "add_color_layer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColorProp"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Added layer successfully"
+          },
+          "400": {
+            "description": "Could not parse a color"
+          },
+          "401": {
+            "description": "Unauthorized to update the layer!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/layers/add/filter/crop": {
+      "post": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "add_crop_filter_layer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CropFilterProps"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Added layer successfully"
+          },
+          "400": {
+            "description": "Could not parse a options"
+          },
+          "401": {
+            "description": "Unauthorized to add layer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/layers/add/timer": {
+      "post": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "add_timer_layer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimerProps"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Added layer successfully"
+          },
+          "400": {
+            "description": "Could not parse a color"
+          },
+          "401": {
+            "description": "Unauthorized to delete Todo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/layers/add/wheel": {
+      "post": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "add_wheel_layer",
+        "responses": {
+          "200": {
+            "description": "Added layer successfully"
+          },
+          "401": {
+            "description": "Unauthorized to add a layer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/layers/switch": {
+      "post": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "switch_layers",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Layers swiched successfully!"
+          },
+          "400": {
+            "description": "Could not parse layer index"
+          },
+          "401": {
+            "description": "Unauthoriesed to switch this layer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/layers/update/color/": {
+      "post": {
+        "tags": [
+          "manipulate_layer"
+        ],
+        "description": "",
+        "operationId": "change_color_layer",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColorProp"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated layer successfully"
+          },
+          "400": {
+            "description": "Could not parse a color"
+          },
+          "401": {
+            "description": "Unauthorized to update the layer!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "Unauthorized": "missing api key"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "LED-API-KEY": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CropFilterProps": {
+        "type": "object",
+        "required": [
+          "left",
+          "right"
+        ],
+        "properties": {
+          "left": {
+            "type": "integer"
+          },
+          "right": {
+            "type": "integer"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "NotFound": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "Conflict": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "Unauthorized": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ColorProp": {
+        "type": "object",
+        "required": [
+          "red",
+          "green",
+          "blue"
+        ],
+        "properties": {
+          "blue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "red": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "green": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TimerProps": {
+        "type": "object",
+        "required": [
+          "duration",
+          "color"
+        ],
+        "properties": {
+          "duration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "color": {
+            "$ref": "#/components/schemas/ColorProp"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "LED-API-KEY": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "LED-API-KEY"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "LED-Animation-Manager Server",
+      "description": "A server to distribute LED-Strip animations."
+    }
+  ]
+}

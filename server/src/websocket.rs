@@ -10,7 +10,7 @@ use uuid::Uuid;
 use crate::state::CURRENT_STATE;
 
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
-const CLIENT_TIMEOUT: Duration = Duration::from_secs(5);
+const CLIENT_TIMEOUT: Duration = Duration::from_secs(20);
 
 lazy_static! {
     pub static ref CONNECTED_CLIENTS: Mutex<HashMap<Uuid, actix::Addr<WebSocketConnection>>> =

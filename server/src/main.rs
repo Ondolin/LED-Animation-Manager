@@ -2,22 +2,13 @@
 extern crate lazy_static;
 
 use actix_cors::Cors;
-use actix_web::{
-    dev::{Service, ServiceRequest, ServiceResponse, Transform},
-    middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer,
-};
+use actix_web::{middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use actix_web_actors::ws;
 use dotenv::dotenv;
-use std::{
-    env,
-    future::{self, Ready},
-};
+use std::env;
 use websocket::WebSocketConnection;
 
-use manipulate_layer::{
-    add_color_layer, add_crop_filter_layer, add_timer_layer, add_wheel_layer, ColorProp,
-    ErrorResponse,
-};
+use manipulate_layer::{ColorProp, CropFilterProps, ErrorResponse, TimerProps};
 
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -25,8 +16,6 @@ use utoipa::{
     openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
     Modify, OpenApi,
 };
-
-use futures::future::LocalBoxFuture;
 
 mod auth;
 mod manipulate_layer;
@@ -53,8 +42,13 @@ async fn main() -> std::io::Result<()> {
         handlers(
             manipulate_layer::add_wheel_layer,
             manipulate_layer::add_color_layer,
+            manipulate_layer::add_crop_filter_layer,
+            manipulate_layer::add_timer_layer,
+            manipulate_layer::delete_by_uuid,
+            manipulate_layer::switch_layers,
+            manipulate_layer::change_color_layer
         ),
-        components(ColorProp, ErrorResponse),
+        components(ColorProp, ErrorResponse, TimerProps, CropFilterProps),
         tags(
             (name = "LED-Animation-Manager Server", description = "A server to distribute LED-Strip animations.")
         ),
@@ -68,14 +62,20 @@ async fn main() -> std::io::Result<()> {
         fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
             let components = openapi.components.as_mut().unwrap(); // we can unwrap safely since there already is components registered.
             components.add_security_scheme(
-                "api_key",
-                SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("led_api_key"))),
+                "LED-API-KEY",
+                SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("LED-API-KEY"))),
             )
         }
     }
 
     // Make instance variable of ApiDoc so all worker threads gets the same instance.
     let openapi = ApiDoc::openapi();
+
+    #[cfg(debug_assertions)]
+    save_openapi_file(
+        openapi.to_pretty_json().unwrap(),
+        openapi.to_yaml().unwrap(),
+    );
 
     log::info!(
         "Starting HTTP server at port {}",
@@ -102,4 +102,19 @@ async fn main() -> std::io::Result<()> {
 fn check_enviroment_variables() {
     env::var("SERVER_PORT").expect("You need to specify a SERVER_PORT in an .env file.");
     env::var("API_KEY").expect("You need to specify an API_KEY in the .env file");
+}
+
+#[cfg(debug_assertions)]
+fn save_openapi_file(json: String, yaml: String) {
+    use std::fs::create_dir_all;
+    use std::fs::File;
+    use std::io::Write;
+
+    create_dir_all("./api").unwrap();
+
+    let mut json_file = File::create("./api/openapi.json").unwrap();
+    let mut yaml_file = File::create("./api/openapi.yaml").unwrap();
+
+    writeln!(&mut json_file, "{}", json).unwrap();
+    writeln!(&mut yaml_file, "{}", yaml).unwrap();
 }
