@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/api.dart';
 
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
 class AddLayerPage extends StatefulWidget {
     AddLayerPage({Key? key, required this.api}) : super(key: key);
 
@@ -25,10 +27,31 @@ class _AddLayerState extends State<AddLayerPage> {
     final ScrollController _controller = ScrollController();
 
     final List<Group> groups = <Group>[
-        Group(title: "Static", items: ["Color value"]),
+        Group(title: "Static", items: ["Color Value"]),
         Group(title: "Moving", items: ["Rainbow Wheel"]),
         Group(title: "Filter", items: ["Crop", "Blur"])
     ];
+
+    void _showBottomDialog(Widget child) {
+        showCupertinoModalPopup<void>(
+            context: context,
+            builder: (BuildContext context) => Container(
+                height: 216,
+                padding: const EdgeInsets.only(top: 6.0),
+                // The Bottom margin is provided to align the popup above the system navigation bar.
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                // Provide a background color for the popup.
+                color: CupertinoColors.systemBackground.resolveFrom(context),
+                // Use a SafeArea widget to avoid system overlaps.
+                child: SafeArea(
+                    top: false,
+                    child: child,
+                ),
+            )
+        );
+    }
 
     @override
         Widget build(BuildContext context) {
@@ -53,7 +76,7 @@ class _AddLayerState extends State<AddLayerPage> {
                                         controller: _controller,
                                         itemCount: groups.length,
                                         itemBuilder: (BuildContext context, index) {
-                                            return LayerGroupSelect(group: groups[index]);
+                                            return LayerGroupSelect(group: groups[index], api: widget.api,);
                                         },
                                     ),
                                 )
@@ -65,18 +88,25 @@ class _AddLayerState extends State<AddLayerPage> {
         }
 }
 
-class LayerGroupSelect extends StatelessWidget {
-    const LayerGroupSelect({Key? key, required this.group}) : super(key: key);
+class LayerGroupSelect extends StatefulWidget {
+    const LayerGroupSelect({Key? key, required this.group, required this.api}) : super(key: key);
 
     final Group group;
+    final ManipulateLayerApi api;
+    
+    @override
+    State<LayerGroupSelect> createState() => LayerGroupState();
+}
+
+class LayerGroupState extends State<LayerGroupSelect> {
 
     @override
     Widget build(BuildContext context) {
         return Column(
             children: <Widget>[
-                Text(group.title),
+                Text(widget.group.title),
                 Column(
-                    children: List<Widget>.generate(group.items.length, (index) => 
+                    children: List<Widget>.generate(widget.group.items.length, (index) => 
                          Dismissible(
                             key: Key("group-$index"),
                             background: Container(
@@ -96,14 +126,160 @@ class LayerGroupSelect extends StatelessWidget {
                                     padding: const EdgeInsets.fromLTRB(16.0, 2.0, 0.0, 2.0),
                                     child: Row(
                                         children: <Widget>[
-                                            Text(group.items[index]),
+                                            Text(widget.group.items[index]),
                                             const Spacer(),
-                                            const Padding(
-                                                padding: EdgeInsets.only(right: 15),
-                                                child: Icon(
-                                                    CupertinoIcons.add_circled_solid,
-                                                    color: Colors.green,
-                                                    size: 30.0,
+                                            CupertinoButton(
+                                                onPressed: () async {
+
+                                                    Color pickerColor = Color(0xff443aff);
+                                                    bool cancel = false;
+        
+                                                    if (["Color Value"].contains(widget.group.items[index])) {
+                                                        await showCupertinoDialog(
+                                                            context: context, 
+                                                            builder: (BuildContext context) {
+                                                                return CupertinoAlertDialog(
+                                                                    title: const Text("Pick a color!"),
+                                                                    content: SingleChildScrollView(
+                                                                        child: Theme(
+                                                                            data: ThemeData.dark(),
+                                                                            child: Material(
+                                                                                child: ColorPicker(
+                                                                                    pickerColor: pickerColor,
+                                                                                    onColorChanged: (Color color) { pickerColor = color; },
+                                                                                    enableAlpha: false,
+                                                                                    // hexInputBar: true,
+                                                                                    displayThumbColor: true,
+                                                                                ),
+                                                                            )
+                                                                        )
+                                                                    ),
+                                                                    actions: <Widget>[
+                                                                        CupertinoButton(
+                                                                            child: const Text("Cancel"),
+                                                                            onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                cancel = true;
+                                                                            },
+                                                                        ),
+                                                                        CupertinoButton(
+                                                                            child: const Text("Finish"),
+                                                                            onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                );
+                                                            },
+                                                        );
+                                                    }
+
+                                                    print("$pickerColor");
+
+                                                    int range_1 = 0;
+                                                    int range_2 = 150;
+
+                                                    if (["Crop"].contains(widget.group.items[index])) {
+
+                                                        TextEditingController controller_1 = TextEditingController(text: "$range_1");
+                                                        controller_1.selection = TextSelection(baseOffset: 0, extentOffset: "$range_1".length);
+
+                                                        TextEditingController controller_2 = TextEditingController(text: "$range_2");
+                                                        controller_2.selection = TextSelection(baseOffset: 0, extentOffset: "$range_2".length);
+
+                                                        await showCupertinoDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                                return CupertinoAlertDialog(
+                                                                    title: const Text("Pick a range."),
+                                                                    content: Column(
+                                                                        children: <Widget>[
+                                                                            CupertinoTextField(
+                                                                                controller: controller_1, 
+                                                                                autofocus: true,
+                                                                                keyboardType: TextInputType.number,
+                                                                                onChanged: (value) => range_1 = int.parse(value),
+                                                                            ),
+                                                                            CupertinoTextField(
+                                                                                controller: controller_2,
+                                                                                autofocus: true,
+                                                                                keyboardType: TextInputType.number,
+                                                                                onChanged: (value) => range_2 = int.parse(value)
+                                                                            ),
+                                                                        ],
+                                                                    ),
+                                                                    actions: <Widget>[
+                                                                        CupertinoButton(
+                                                                            child: const Text("Cancel"),
+                                                                            onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                cancel = true;
+                                                                            },
+                                                                        ),
+                                                                        CupertinoButton(
+                                                                            child: const Text("Finish"),
+                                                                            onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                            },
+                                                                        ),
+                                                                    ],
+
+                                                                );
+                                                            }
+                                                        );
+                                                    }
+
+                                                    if (["Rainbow Wheel"].contains(widget.group.items[index])) {
+                                                        await showCupertinoDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                                return CupertinoAlertDialog(
+                                                                    title: const Text("Sure?"),
+                                                                    content: const Text("Are you sure you want to add this layer?"),
+                                                                    actions: <Widget>[
+                                                                        CupertinoButton(
+                                                                            child: const Text("Cancel"),
+                                                                            onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                cancel = true;
+                                                                            },
+                                                                        ),
+                                                                        CupertinoButton(
+                                                                            child: const Text("Add"),
+                                                                            onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                );
+                                                            },
+                                                        );
+                                                    }
+
+                                                    if (!cancel) {
+                                                        switch (widget.group.items[index]) {
+                                                            case "Color Value":
+
+                                                                widget.api.addColorLayer(ColorProp(red: pickerColor.red, green: pickerColor.green, blue: pickerColor.blue));
+                                                                break;
+                                                            case "Rainbow Wheel":
+                                                                widget.api.addWheelLayer();
+                                                                break;
+                                                            case "Crop":
+                                                                widget.api.addCropFilterLayer(CropFilterProps(left: range_1, right: range_2));
+                                                        }    
+                                                    }
+
+                                                    
+
+                                                },
+                                                child: const Padding(
+                                                    padding: EdgeInsets.only(right: 15),
+                                                    child: Icon(
+                                                        CupertinoIcons.add_circled_solid,
+                                                        color: Colors.green,
+                                                        size: 30.0,
+                                                    )
                                                 )
                                             )
                                         ],
@@ -115,73 +291,5 @@ class LayerGroupSelect extends StatelessWidget {
                 )
             ]
         );
-    }
-
-}
-
-void addLayerByName(String name, ManipulateLayerApi api, BuildContext context) {
-    switch (name) {
-        case "Color value":
-            // create some values
-            //Color pickerColor = Color(0xff443a49);
-            //Color currentColor = Color(0xff443a49);
-
-            //// ValueChanged<Color> callback
-            //void changeColor(Color color) {
-            //  setState(() => pickerColor = color);
-            //}
-
-            //// raise the [showDialog] widget
-            //showDialog(
-            //  context: context,
-            //  child: AlertDialog(
-            //    title: const Text('Pick a color!'),
-            //    content: SingleChildScrollView(
-            //      child: ColorPicker(
-            //        pickerColor: pickerColor,
-            //        onColorChanged: changeColor,
-            //      ),
-            //      // Use Material color picker:
-            //      //
-            //      // child: MaterialPicker(
-            //      //   pickerColor: pickerColor,
-            //      //   onColorChanged: changeColor,
-            //      //   showLabel: true, // only on portrait mode
-            //      // ),
-            //      //
-            //      // Use Block color picker:
-            //      //
-            //      // child: BlockPicker(
-            //      //   pickerColor: currentColor,
-            //      //   onColorChanged: changeColor,
-            //      // ),
-            //      //
-            //      // child: MultipleChoiceBlockPicker(
-            //      //   pickerColors: currentColors,
-            //      //   onColorsChanged: changeColors,
-            //      // ),
-            //    ),
-            //    actions: <Widget>[
-            //      ElevatedButton(
-            //        child: const Text('Got it'),
-            //        onPressed: () {
-            //          setState(() => currentColor = pickerColor);
-            //          Navigator.of(context).pop();
-            //        },
-            //      ),
-            //    ],
-            //  ),
-            //);
-        break;
-        case "Rainbow Wheel":
-
-        break;
-        case "Crop":
-
-        break;
-        case "Blur":
-
-        break;
-        default:
     }
 }

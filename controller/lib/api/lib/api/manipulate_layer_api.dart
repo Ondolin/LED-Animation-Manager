@@ -191,6 +191,56 @@ class ManipulateLayerApi {
   /// Parameters:
   ///
   /// * [String] uuid (required):
+  ///
+  /// * [ColorProp] colorProp (required):
+  Future<Response> changeColorLayerWithHttpInfo(String uuid, ColorProp colorProp,) async {
+    // ignore: prefer_const_declarations
+    final path = r'/layers/update/color/';
+
+    // ignore: prefer_final_locals
+    Object? postBody = colorProp;
+
+    final queryParams = <QueryParam>[];
+    final headerParams = <String, String>{};
+    final formParams = <String, String>{};
+
+      queryParams.addAll(_queryParams('', 'uuid', uuid));
+
+    const contentTypes = <String>['application/json'];
+
+
+    return apiClient.invokeAPI(
+      path,
+      'POST',
+      queryParams,
+      postBody,
+      headerParams,
+      formParams,
+      contentTypes.isEmpty ? null : contentTypes.first,
+    );
+  }
+
+  /// 
+  ///
+  /// Parameters:
+  ///
+  /// * [String] uuid (required):
+  ///
+  /// * [ColorProp] colorProp (required):
+  Future<void> changeColorLayer(String uuid, ColorProp colorProp,) async {
+    final response = await changeColorLayerWithHttpInfo(uuid, colorProp,);
+    if (response.statusCode >= HttpStatus.badRequest) {
+      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
+    }
+  }
+
+  /// 
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
+  /// Parameters:
+  ///
+  /// * [String] uuid (required):
   Future<Response> deleteByUuidWithHttpInfo(String uuid,) async {
     // ignore: prefer_const_declarations
     final path = r'/layer';
@@ -258,7 +308,7 @@ class ManipulateLayerApi {
 
     return apiClient.invokeAPI(
       path,
-      'DELETE',
+      'POST',
       queryParams,
       postBody,
       headerParams,

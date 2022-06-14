@@ -20,6 +20,7 @@ void main() async {
 class MyApp extends StatelessWidget {
     const MyApp({Key? key}) : super(key: key);
 
+
     @override
         Widget build(BuildContext context) {
             return MediaQuery.fromWindow(
@@ -116,23 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     margin: const EdgeInsets.only(top: 100),
                     child: Column(
                         children: <Widget>[
-                        const Text(
-                            'You have pushed the button this many times:',
-                        ),
-                        Text(
-                            '$_counter',
-                        ),
-                        CupertinoButton.filled(
-                            onPressed: _incrementCounter,
-                            child: const Text("+"),
-                        ),
-                        CupertinoSwitch(
-                            value: _toggle,
-                            onChanged: (bool value) {
-                                setState(() {
-                                    _toggle = value;
-                                });
-                        }),
                         Expanded(
                             child: CupertinoScrollbar(
                                 thickness: 6.0,
@@ -192,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     Navigator.push(
                                                         context,
                                                         MaterialPageRoute(builder: (context) {
-                                                            return AnimationDetailsPage(layers: _layers, index: index);
+                                                            return AnimationDetailsPage(layers: _layers, index: index, api: api);
                                                         })
                                                     );
                                                 },
@@ -247,7 +231,9 @@ String get_animation_common_name(LinkedHashMap animation) {
             case "Wheel":
                 return "Rainbow Wheel Animation";
             case "Color":
-                return "Basic Color";
+                return "Basic Color (${animation['value']['red']}, ${animation['value']['green']}, ${animation['value']['blue']})";
+            case "Crop":
+                return "Crop Filter (${animation['left']} | ${animation['right']})";
             default:
                 return "Unknown Animation: $animation";
         }

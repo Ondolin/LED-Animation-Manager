@@ -65,8 +65,9 @@ Class | Method | HTTP request | Description
 *ManipulateLayerApi* | [**addCropFilterLayer**](doc//ManipulateLayerApi.md#addcropfilterlayer) | **POST** /layers/add/filter/crop | 
 *ManipulateLayerApi* | [**addTimerLayer**](doc//ManipulateLayerApi.md#addtimerlayer) | **POST** /layers/add/timer | 
 *ManipulateLayerApi* | [**addWheelLayer**](doc//ManipulateLayerApi.md#addwheellayer) | **POST** /layers/add/wheel | 
+*ManipulateLayerApi* | [**changeColorLayer**](doc//ManipulateLayerApi.md#changecolorlayer) | **POST** /layers/update/color/ | 
 *ManipulateLayerApi* | [**deleteByUuid**](doc//ManipulateLayerApi.md#deletebyuuid) | **DELETE** /layer | 
-*ManipulateLayerApi* | [**switchLayers**](doc//ManipulateLayerApi.md#switchlayers) | **DELETE** /layers/switch | 
+*ManipulateLayerApi* | [**switchLayers**](doc//ManipulateLayerApi.md#switchlayers) | **POST** /layers/switch | 
 
 
 ## Documentation For Models

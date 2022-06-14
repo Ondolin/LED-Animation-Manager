@@ -13,8 +13,9 @@ Method | HTTP request | Description
 [**addCropFilterLayer**](ManipulateLayerApi.md#addcropfilterlayer) | **POST** /layers/add/filter/crop | 
 [**addTimerLayer**](ManipulateLayerApi.md#addtimerlayer) | **POST** /layers/add/timer | 
 [**addWheelLayer**](ManipulateLayerApi.md#addwheellayer) | **POST** /layers/add/wheel | 
+[**changeColorLayer**](ManipulateLayerApi.md#changecolorlayer) | **POST** /layers/update/color/ | 
 [**deleteByUuid**](ManipulateLayerApi.md#deletebyuuid) | **DELETE** /layer | 
-[**switchLayers**](ManipulateLayerApi.md#switchlayers) | **DELETE** /layers/switch | 
+[**switchLayers**](ManipulateLayerApi.md#switchlayers) | **POST** /layers/switch | 
 
 
 # **addColorLayer**
@@ -197,6 +198,54 @@ void (empty response body)
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **changeColorLayer**
+> changeColorLayer(uuid, colorProp)
+
+
+
+
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+// TODO Configure API key authorization: LED-API-KEY
+//defaultApiClient.getAuthentication<ApiKeyAuth>('LED-API-KEY').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('LED-API-KEY').apiKeyPrefix = 'Bearer';
+
+final api_instance = ManipulateLayerApi();
+final uuid = uuid_example; // String | 
+final colorProp = ColorProp(); // ColorProp | 
+
+try {
+    api_instance.changeColorLayer(uuid, colorProp);
+} catch (e) {
+    print('Exception when calling ManipulateLayerApi->changeColorLayer: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **uuid** | **String**|  | 
+ **colorProp** | [**ColorProp**](ColorProp.md)|  | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[LED-API-KEY](../README.md#LED-API-KEY)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **deleteByUuid**
 > deleteByUuid(uuid)
 
@@ -244,8 +293,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **switchLayers**
-
-<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recursive:<SNR>0_(cmp.u.k.recurs))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))> switchLayers(from, to)
+> switchLayers(from, to)
 
 
 
