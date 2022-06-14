@@ -80,7 +80,8 @@ async fn main() {
                         if uuid == old_layer.uuid() {
                             let old_layer = layers.layers.remove(index);
 
-                            new_layers.push_layer(old_layer);
+                            new_layers.push_layer(new_layer);
+
                             continue 'outer;
                         }
                     }
