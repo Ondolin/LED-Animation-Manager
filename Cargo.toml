@@ -2,6 +2,7 @@
 
 members = [
     "layers",
+    "layers/animation_macro",
     "server",
     "led-client",
     "prisma"

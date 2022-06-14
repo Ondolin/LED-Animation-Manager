@@ -12,6 +12,7 @@ pub use none::NoAnimation;
 pub mod filter;
 pub mod rainbow_layers;
 pub mod static_layers;
+pub mod info_layers;
 
 pub type BoxedLayer = Box<dyn Layer>;
 pub type Rgb = prisma::Rgb<u8>;

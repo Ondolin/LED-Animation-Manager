@@ -19,6 +19,14 @@ impl Color {
             value: color,
         }
     }
+
+    pub fn new_with_uuid(color: Rgb, uuid: Uuid) -> Self {
+        Self { 
+            uuid,
+            leds: Default::default(),
+            value: color
+        }
+    }
 }
 
 #[typetag::serde]
@@ -27,7 +35,9 @@ impl Layer for Color {
         self.leds = vec![self.value; *STRIP_SIZE];
     }
 
-    fn update(&mut self, _previous_layers: &[BoxedLayer]) {}
+    fn update(&mut self, _previous_layers: &[BoxedLayer]) {
+        self.leds = vec![self.value; *STRIP_SIZE];
+    }
 
     fn to_led_values(&self) -> &Vec<Rgb> {
         &self.leds
