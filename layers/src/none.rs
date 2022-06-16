@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{BoxedLayer, Layer, Rgb, STRIP_SIZE};
+use crate::{Layer, Rgb, STRIP_SIZE, Animation};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, animation_macro::AnimationTraits)]
 pub struct NoAnimation {
     uuid: Uuid,
     #[serde(skip)]
@@ -19,19 +19,15 @@ impl NoAnimation {
     }
 }
 
-#[typetag::serde]
 impl Layer for NoAnimation {
-    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) {
+    fn initialize(&mut self, _previous_layers: &[Animation]) {
         self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
     }
 
-    fn update(&mut self, _previous_layers: &[BoxedLayer]) {}
+    fn update(&mut self, _previous_layers: &[Animation]) {}
 
     fn to_led_values(&self) -> &Vec<Rgb> {
         &self.leds
     }
 
-    fn uuid(&self) -> Uuid {
-        self.uuid
-    }
 }

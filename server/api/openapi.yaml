@@ -211,16 +211,6 @@ paths:
         - LED-API-KEY: []
 components:
   schemas:
-    CropFilterProps:
-      type: object
-      required:
-        - left
-        - right
-      properties:
-        left:
-          type: integer
-        right:
-          type: integer
     ErrorResponse:
       oneOf:
         - type: object
@@ -235,6 +225,17 @@ components:
           properties:
             Unauthorized:
               type: string
+    TimerProps:
+      type: object
+      required:
+        - duration
+        - color
+      properties:
+        color:
+          $ref: "#/components/schemas/ColorProp"
+        duration:
+          type: integer
+          format: int64
     ColorProp:
       type: object
       required:
@@ -251,17 +252,16 @@ components:
         green:
           type: integer
           format: int32
-    TimerProps:
+    CropFilterProps:
       type: object
       required:
-        - duration
-        - color
+        - left
+        - right
       properties:
-        duration:
+        right:
           type: integer
-          format: int64
-        color:
-          $ref: "#/components/schemas/ColorProp"
+        left:
+          type: integer
   securitySchemes:
     LED-API-KEY:
       type: apiKey

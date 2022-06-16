@@ -1,4 +1,4 @@
-use crate::{BoxedLayer, Layer, Rgb, STRIP_SIZE};
+use crate::{Layer, Rgb, STRIP_SIZE, Animation};
 
 use prisma::{FromColor, Hsv};
 use serde::{Deserialize, Serialize};
@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 use angular_units::Deg;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Wheel {
+#[derive(Serialize, Deserialize, Debug, PartialEq, animation_macro::AnimationTraits)]
+pub struct RainbowWheel {
     uuid: Uuid,
     step_size: Deg<f32>,
     #[serde(skip)]
@@ -16,9 +16,9 @@ pub struct Wheel {
     current_color: Hsv<f32, Deg<f32>>,
 }
 
-impl Wheel {
-    pub fn new(step_size: Deg<f32>) -> Wheel {
-        Wheel {
+impl RainbowWheel {
+    pub fn new(step_size: Deg<f32>) -> Self {
+        Self {
             uuid: Uuid::new_v4(),
             leds: Vec::new(),
             step_size,
@@ -27,14 +27,13 @@ impl Wheel {
     }
 }
 
-#[typetag::serde]
-impl Layer for Wheel {
-    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) {
+impl Layer for RainbowWheel {
+    fn initialize(&mut self, _previous_layers: &[Animation]) {
         self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
         self.current_color = Hsv::new(Deg(0.0), 1.0, 1.0)
     }
 
-    fn update(&mut self, _previous_layers: &[BoxedLayer]) {
+    fn update(&mut self, _previous_layers: &[Animation]) {
         *self.current_color.hue_mut() += self.step_size;
         *self.current_color.hue_mut() %= Deg(360.0);
 
@@ -54,7 +53,4 @@ impl Layer for Wheel {
         &self.leds
     }
 
-    fn uuid(&self) -> Uuid {
-        self.uuid
-    }
 }

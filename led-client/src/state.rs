@@ -1,10 +1,9 @@
+use layers::Animation;
 use serde::{Deserialize, Serialize};
-
-use layers::BoxedLayer;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StripLayers {
-    pub layers: Vec<BoxedLayer>,
+    pub layers: Vec<Animation>,
 }
 
 impl StripLayers {
@@ -12,7 +11,7 @@ impl StripLayers {
         Self { layers: Vec::new() }
     }
 
-    pub fn push_layer(&mut self, layer: BoxedLayer) {
+    pub fn push_layer(&mut self, layer: Animation) {
         self.layers.push(layer);
     }
 }

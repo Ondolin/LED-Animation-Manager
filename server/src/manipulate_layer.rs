@@ -6,8 +6,8 @@ use actix_web::{
     HttpResponse, Responder,
 };
 use layers::{
-    filter::Crop, info_layers::Timer, rainbow_layers::Wheel, static_layers::Color, BoxedLayer,
-    Layer, Rgb,
+    filter::Crop, info_layers::Timer, rainbow_layers::RainbowWheel, static_layers::Color,
+    Layer, Rgb, Animation,
 };
 
 use utoipa::{Component, IntoParams};
@@ -64,7 +64,7 @@ pub async fn add_color_layer(color: web::Json<ColorProp>) -> impl Responder {
 
     let color = Rgb::new(color.red, color.green, color.blue);
 
-    state.layers.push(Box::new(Color::new(color)));
+    state.layers.push(Color::new(color).into());
 
     send_update();
 
@@ -105,8 +105,8 @@ pub async fn change_color_layer(
         if layer.uuid() == uuid {
             let color = Rgb::new(color.red, color.green, color.blue);
 
-            let new_layer: BoxedLayer =
-                Box::new(layers::static_layers::Color::new_with_uuid(color, uuid));
+            let new_layer: Animation =
+                layers::static_layers::Color::new_with_uuid(color, uuid).into();
 
             // state.layers.split_mut(index, new_layer);
 
@@ -136,7 +136,7 @@ pub async fn add_wheel_layer() -> impl Responder {
     log::info!("Added wheel layer.");
 
     let mut state = CURRENT_STATE.lock().unwrap();
-    state.layers.push(Box::new(Wheel::new(layers::Deg(2.0))));
+    state.layers.push(RainbowWheel::new(layers::Deg(2.0)).into());
 
     send_update();
 
@@ -167,7 +167,7 @@ pub async fn add_crop_filter_layer(crop_filter: web::Json<CropFilterProps>) -> i
     let mut state = CURRENT_STATE.lock().unwrap();
     state
         .layers
-        .push(Box::new(Crop::new(crop_filter.left, crop_filter.right)));
+        .push(Crop::new(crop_filter.left, crop_filter.right).into());
 
     send_update();
 
@@ -196,10 +196,10 @@ pub async fn add_timer_layer(props: web::Json<TimerProps>) -> impl Responder {
     log::info!("Added new timer layer.");
 
     let mut state = CURRENT_STATE.lock().unwrap();
-    state.layers.push(Box::new(Timer::new(
+    state.layers.push(Timer::new(
         Duration::from_secs(props.duration),
         layers::Rgb::new(props.color.red, props.color.green, props.color.blue),
-    )));
+    ).into());
 
     send_update();
 

@@ -1,12 +1,12 @@
 use std::time::{Duration, SystemTime};
 
-use crate::{BoxedLayer, Layer, Rgb, STRIP_SIZE};
+use crate::{Layer, Rgb, STRIP_SIZE, Animation};
 
 use serde::{Deserialize, Serialize};
 
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, animation_macro::AnimationTraits)]
 pub struct Timer {
     uuid: Uuid,
     start_time: SystemTime,
@@ -28,13 +28,12 @@ impl Timer {
     }
 }
 
-#[typetag::serde]
 impl Layer for Timer {
-    fn initialize(&mut self, _previous_layers: &[BoxedLayer]) {
+    fn initialize(&mut self, _previous_layers: &[Animation]) {
         self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
     }
 
-    fn update(&mut self, previous_layers: &[BoxedLayer]) {
+    fn update(&mut self, previous_layers: &[Animation]) {
 
         let percentage_past = 1.0 - (self.start_time.elapsed().unwrap().as_millis() as f32 / self.target_time.as_millis() as f32);
 
@@ -59,7 +58,4 @@ impl Layer for Timer {
         &self.leds
     }
 
-    fn uuid(&self) -> Uuid {
-        self.uuid
-    }
 }

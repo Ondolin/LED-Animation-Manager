@@ -1,3 +1,3 @@
 mod wheel;
 
-pub use wheel::Wheel;
+pub use wheel::RainbowWheel;

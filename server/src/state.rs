@@ -2,13 +2,12 @@ use std::sync::Mutex;
 
 use serde::{Deserialize, Serialize};
 
-use layers::BoxedLayer;
-
 use crate::websocket::CONNECTED_CLIENTS;
+use layers::Animation;
 
 #[derive(Serialize, Deserialize)]
 pub struct StripLayers {
-    pub layers: Vec<BoxedLayer>,
+    pub layers: Vec<Animation>,
 }
 
 impl StripLayers {

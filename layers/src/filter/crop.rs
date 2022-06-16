@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{BoxedLayer, Layer, Rgb, STRIP_SIZE};
+use crate::{Layer, Rgb, STRIP_SIZE, Animation};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, animation_macro::AnimationTraits)]
 pub struct Crop {
     uuid: Uuid,
     left: usize,
@@ -23,9 +23,8 @@ impl Crop {
     }
 }
 
-#[typetag::serde]
 impl Layer for Crop {
-    fn initialize(&mut self, previous_layers: &[BoxedLayer]) {
+    fn initialize(&mut self, previous_layers: &[Animation]) {
         self.leds = vec![Rgb::new(0, 0, 0); *STRIP_SIZE];
 
         if self.left as usize > *STRIP_SIZE {
@@ -39,7 +38,7 @@ impl Layer for Crop {
         }
     }
 
-    fn update(&mut self, previous_layers: &[BoxedLayer]) {
+    fn update(&mut self, previous_layers: &[Animation]) {
         let amount_layers = previous_layers.len();
         let strip_size: usize = *STRIP_SIZE;
 
@@ -59,7 +58,4 @@ impl Layer for Crop {
         &self.leds
     }
 
-    fn uuid(&self) -> Uuid {
-        self.uuid
-    }
 }

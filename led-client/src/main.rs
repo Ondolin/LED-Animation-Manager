@@ -4,6 +4,7 @@ use diplomatic_bag::DiplomaticBag;
 use dotenv::dotenv;
 use fps_clock::FpsClock;
 use futures_util::{SinkExt, StreamExt};
+use layers::Animation;
 use strip::write_layer;
 use tokio::sync::Mutex;
 use tokio_tungstenite::connect_async;
@@ -80,7 +81,12 @@ async fn main() {
                         if uuid == old_layer.uuid() {
                             let old_layer = layers.layers.remove(index);
 
-                            new_layers.push_layer(new_layer);
+                            if new_layer != old_layer {
+                                new_layer.initialize(&new_layers.layers);
+                                new_layers.push_layer(new_layer);
+                            } else {
+                                new_layers.push_layer(old_layer);
+                            }
 
                             continue 'outer;
                         }
@@ -135,7 +141,7 @@ async fn manage_stip(strip: Arc<Mutex<StripLayers>>) {
 
         if amount_layers == 0 {
             println!("No layer pesent");
-            let no: Box<dyn layers::Layer> = Box::new(layers::NoAnimation::new());
+            let no: Animation = layers::NoAnimation::new().into();
             adapter
                 .as_mut()
                 .map(|_, adapter| write_layer(adapter, &no));

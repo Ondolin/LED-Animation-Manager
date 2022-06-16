@@ -7,9 +7,11 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-typetag = "0.1"
 prisma = { path = "../prisma/" }
 lazy_static = "1.4"
 angular-units = { version = "0.2.4", features = ["serde"] }
 uuid = { version = "1.1.0", features = ["v4", "serde"] }
 log = "0.4"
+
+animation_macro = { path = "./animation_macro" }
+static_assertions = "1.1.0"
