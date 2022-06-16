@@ -343,27 +343,33 @@
   },
   "components": {
     "schemas": {
-      "ColorProp": {
-        "type": "object",
-        "required": [
-          "red",
-          "green",
-          "blue"
-        ],
-        "properties": {
-          "blue": {
-            "type": "integer",
-            "format": "int32"
+      "ErrorResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "NotFound": {
+                "type": "string"
+              }
+            }
           },
-          "red": {
-            "type": "integer",
-            "format": "int32"
+          {
+            "type": "object",
+            "properties": {
+              "Conflict": {
+                "type": "string"
+              }
+            }
           },
-          "green": {
-            "type": "integer",
-            "format": "int32"
+          {
+            "type": "object",
+            "properties": {
+              "Unauthorized": {
+                "type": "string"
+              }
+            }
           }
-        }
+        ]
       },
       "CropFilterProps": {
         "type": "object",
@@ -396,33 +402,27 @@
           }
         }
       },
-      "ErrorResponse": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "NotFound": {
-                "type": "string"
-              }
-            }
+      "ColorProp": {
+        "type": "object",
+        "required": [
+          "red",
+          "green",
+          "blue"
+        ],
+        "properties": {
+          "blue": {
+            "type": "integer",
+            "format": "int32"
           },
-          {
-            "type": "object",
-            "properties": {
-              "Conflict": {
-                "type": "string"
-              }
-            }
+          "red": {
+            "type": "integer",
+            "format": "int32"
           },
-          {
-            "type": "object",
-            "properties": {
-              "Unauthorized": {
-                "type": "string"
-              }
-            }
+          "green": {
+            "type": "integer",
+            "format": "int32"
           }
-        ]
+        }
       }
     },
     "securitySchemes": {

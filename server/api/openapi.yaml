@@ -211,22 +211,20 @@ paths:
         - LED-API-KEY: []
 components:
   schemas:
-    ColorProp:
-      type: object
-      required:
-        - red
-        - green
-        - blue
-      properties:
-        blue:
-          type: integer
-          format: int32
-        red:
-          type: integer
-          format: int32
-        green:
-          type: integer
-          format: int32
+    ErrorResponse:
+      oneOf:
+        - type: object
+          properties:
+            NotFound:
+              type: string
+        - type: object
+          properties:
+            Conflict:
+              type: string
+        - type: object
+          properties:
+            Unauthorized:
+              type: string
     CropFilterProps:
       type: object
       required:
@@ -248,20 +246,22 @@ components:
         duration:
           type: integer
           format: int64
-    ErrorResponse:
-      oneOf:
-        - type: object
-          properties:
-            NotFound:
-              type: string
-        - type: object
-          properties:
-            Conflict:
-              type: string
-        - type: object
-          properties:
-            Unauthorized:
-              type: string
+    ColorProp:
+      type: object
+      required:
+        - red
+        - green
+        - blue
+      properties:
+        blue:
+          type: integer
+          format: int32
+        red:
+          type: integer
+          format: int32
+        green:
+          type: integer
+          format: int32
   securitySchemes:
     LED-API-KEY:
       type: apiKey
