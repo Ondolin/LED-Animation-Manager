@@ -1,0 +1,13 @@
+[Unit]
+Description=This is the client for the LED-Controller application.
+
+[Service]
+Environment="SERVER_HOST="
+Environment="SERVER_PORT=777"
+Environment="FRAMES_PER_SECOND=20"
+Environment="STRIP_SIZE=150"
+
+ExecStart=[[path to your binary]]
+
+[Install]
+WantedBy=multi-user.target

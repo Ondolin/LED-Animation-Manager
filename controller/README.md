@@ -1,16 +1,17 @@
-# controller
+# LED controller
 
-A new Flutter project.
+## What is this?
 
-## Getting Started
+This is a multiplatform app you can use to controll your LED stip.
 
-This project is a starting point for a Flutter application.
+## Installation
 
-A few resources to get you started if this is your first Flutter project:
+### Build from source
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Since this is a flutter app you will need to install flutter.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. go to this folder
+2. fill in the `.env` file (there is a `.env.example`)
+3. run `flutter run --release`
+
+Note that for iOS apps it will be nessesary to sighn the application. If there occurs any problem, feel free to open an issue and I will explain in more detail how to do so.

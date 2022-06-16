@@ -343,50 +343,6 @@
   },
   "components": {
     "schemas": {
-      "ErrorResponse": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "NotFound": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
-              "Conflict": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
-              "Unauthorized": {
-                "type": "string"
-              }
-            }
-          }
-        ]
-      },
-      "TimerProps": {
-        "type": "object",
-        "required": [
-          "duration",
-          "color"
-        ],
-        "properties": {
-          "color": {
-            "$ref": "#/components/schemas/ColorProp"
-          },
-          "duration": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
       "ColorProp": {
         "type": "object",
         "required": [
@@ -416,13 +372,57 @@
           "right"
         ],
         "properties": {
-          "right": {
+          "left": {
             "type": "integer"
           },
-          "left": {
+          "right": {
             "type": "integer"
           }
         }
+      },
+      "TimerProps": {
+        "type": "object",
+        "required": [
+          "duration",
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/ColorProp"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "NotFound": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "Conflict": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "Unauthorized": {
+                "type": "string"
+              }
+            }
+          }
+        ]
       }
     },
     "securitySchemes": {

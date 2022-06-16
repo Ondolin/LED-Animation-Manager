@@ -1,0 +1,11 @@
+[Unit]
+Description=This is the server for the LED-Controller application.
+
+[Service]
+Environment="SERVER_PORT=777"
+Environment="API_KEY="
+
+ExecStart=[[path to your binary]]
+
+[Install]
+WantedBy=multi-user.target
