@@ -199,8 +199,6 @@ jobs:
         with:
           channel: 'beta'
       - run: cd controller && flutter pub get
-      - run: cd controller && flutter format --set-exit-if-changed .
-      - run: cd controller && flutter analyze .
       - run: cd controller && flutter build apk
       
       - name: Upload release APK
