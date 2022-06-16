@@ -32,3 +32,7 @@ If the build fails, it is also recommended to install `libssl-dev`, `cmake`, `bu
 8. run the systemd service (`sudo systemctl start led-controller-server.service`)
 
 Note that you can also run the server directly by running `cargo run --release`. You can do so if you do not have systemd (e.g. on macOS or windows).
+
+### Install prebuild binary
+
+There are prebuild linux versions of this packet available at [https://github.com/Ondolin/LED-Animation-Manager/releases](https://github.com/Ondolin/LED-Animation-Manager/releases).

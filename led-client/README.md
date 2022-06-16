@@ -23,4 +23,4 @@ Due to the design of this project it will be nessessary to run the command on th
 
 ### Install prebuild binary
 
-There are prebuild ARM versions of this packet available at [https://github.com/Ondolin/LED-Animation-Manager/releases](https://github.com/Ondolin/LED-Animation-Manager/releases).
+There are prebuild linux versions of this packet available at [https://github.com/Ondolin/LED-Animation-Manager/releases](https://github.com/Ondolin/LED-Animation-Manager/releases).
