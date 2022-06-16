@@ -192,13 +192,13 @@ jobs:
     needs: ['create-release']
     steps:
       - uses: actions/checkout@v1
-      - run: cd controller
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
       - uses: subosito/flutter-action@v1
         with:
           channel: 'beta'
+      - run: cd controller
       - run: flutter pub get
       - run: flutter format --set-exit-if-changed .
       - run: flutter analyze .
@@ -209,7 +209,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: build/app/outputs/apk/release/app-release.apk
+          upload_url: controller/build/app/outputs/apk/release/app-release.apk
           asset_path: app-release.apk
           asset_name: android-app.apk
           asset_content_type: application/octet-stream
