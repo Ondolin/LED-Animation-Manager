@@ -198,11 +198,10 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'beta'
-      - run: cd controller
-      - run: flutter pub get
-      - run: flutter format --set-exit-if-changed .
-      - run: flutter analyze .
-      - run: flutter build apk
+      - run: cd controller && flutter pub get
+      - run: cd controller && flutter format --set-exit-if-changed .
+      - run: cd controller && flutter analyze .
+      - run: cd controller && flutter build apk
       
       - name: Upload release APK
         uses: actions/upload-release-asset@v1.0.1
