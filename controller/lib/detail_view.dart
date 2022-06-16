@@ -11,7 +11,7 @@ class AnimationDetailsPage extends StatefulWidget {
 
     final int index;
 
-    final ManipulateLayerApi api;
+    final ManipulateLayerApi? api;
 
     final thr = Debouncing(duration: const Duration(milliseconds: 10));
 
@@ -46,7 +46,7 @@ class _AnimationDetailState extends State<AnimationDetailsPage> {
                                         enableAlpha: false,
                                         onColorChanged: (Color color) {
                                             widget.thr.debounce(() {
-                                                widget.api.changeColorLayer(widget.layers[widget.index]['uuid'], ColorProp(red: color.red, green: color.green, blue: color.blue));
+                                                widget.api?.changeColorLayer(widget.layers[widget.index]['uuid'], ColorProp(red: color.red, green: color.green, blue: color.blue));
                                             });
                                         }
                                     ),

@@ -9,7 +9,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 class AddLayerPage extends StatefulWidget {
     AddLayerPage({Key? key, required this.api}) : super(key: key);
 
-    ManipulateLayerApi api;
+    ManipulateLayerApi? api;
 
     @override
     State<AddLayerPage> createState() => _AddLayerState();
@@ -25,7 +25,7 @@ class Group {
 abstract class Item {
     String title;
 
-    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api);
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi? api);
 
     Item({required this.title});
 }
@@ -166,7 +166,7 @@ Future<bool> confirmDialog(BuildContext context) async {
 
 Future<int> timePickerDialog(BuildContext context) async {
 
-    DateTime time = DateTime.utc(0, 0, 0, 0, 0, 0);
+    Duration time = Duration(seconds: 0);
     
     Future<void> _showDialog(Widget child) async {
         return await showCupertinoModalPopup<void>(
@@ -188,17 +188,15 @@ Future<int> timePickerDialog(BuildContext context) async {
                 ));
     }
 
-    await _showDialog(CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    use24hFormat: true,
-                    initialDateTime: DateTime.utc(2000, 1, 0, 0, 0, 0),
-                    onDateTimeChanged: (DateTime dateTime) {
+    await _showDialog(CupertinoTimerPicker(
+                    mode: CupertinoTimerPickerMode.hm,
+                    onTimerDurationChanged: (Duration dateTime) {
                         time = dateTime;
                     },
                 )
     );
 
-    return (time.minute + time.hour * 60) * 60;
+    return time.inSeconds;
     
 }
 
@@ -207,11 +205,11 @@ class ColorValueItem implements Item{
     String title = "Color Value";
 
     @override
-    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi? api) async {
         
         Color? color = await colorDialog(context);
 
-        if (color != null) {
+        if (color != null && api != null) {
             api.addColorLayer(ColorProp(red: color.red, green: color.green, blue: color.blue));
             return true;
         }
@@ -225,11 +223,11 @@ class CropItem implements Item {
     String title = "Crop";
 
     @override
-    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi? api) async {
 
         CropFilterProps? props = await cropDialog(context);
 
-        if (props != null) {
+        if (props != null && api != null) {
             api.addCropFilterLayer(props);
             return true;
         }
@@ -243,8 +241,8 @@ class RainbowWheelItem implements Item {
     String title = "Rainbow Wheel";
 
     @override
-    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
-        if (await confirmDialog(context)) {
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi? api) async {
+        if (api != null && await confirmDialog(context)) {
             api.addWheelLayer();
             return true;
         }
@@ -257,10 +255,10 @@ class TimerItem implements Item {
     String title = "Timer";
 
     @override
-    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi? api) async {
         int time = await timePickerDialog(context);
 
-        if (time > 0) {
+        if (time > 0 && api != null) {
             api.addTimerLayer(TimerProps(color: ColorProp(red: 255, green: 0, blue: 0), duration: time));
             return true;
         }
@@ -320,7 +318,7 @@ class LayerGroupSelect extends StatefulWidget {
     const LayerGroupSelect({Key? key, required this.group, required this.api}) : super(key: key);
 
     final Group group;
-    final ManipulateLayerApi api;
+    final ManipulateLayerApi? api;
     
     @override
     State<LayerGroupSelect> createState() => LayerGroupState();

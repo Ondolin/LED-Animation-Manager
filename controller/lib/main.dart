@@ -1,11 +1,17 @@
 import 'dart:collection';
-import 'dart:ui';
+import 'dart:io';
+import 'dart:async';
 
+
+import 'package:controller/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+
 
 import 'package:openapi/api.dart';
 
@@ -14,8 +20,22 @@ import 'package:controller/detail_view.dart';
 import 'package:controller/add_layer_page.dart';
 
 void main() async {
-    await dotenv.load(fileName: ".env");
     runApp(const MyApp());
+}
+
+class PlatformDetails {
+    static final PlatformDetails _singleton = PlatformDetails._internal();
+    factory PlatformDetails() {
+        return _singleton;
+    }
+    PlatformDetails._internal();
+    bool get isDesktop =>
+        defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows;
+    bool get isMobile =>
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.android;
 }
 
 class MyApp extends StatelessWidget {
@@ -46,41 +66,56 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    final _channel =
-        WebSocketChannel.connect(Uri.parse("ws://10.2.0.1:777/live"));
+    late WebSocketChannel _channel;
 
-    var api;
+    ManipulateLayerApi? api;
 
-    _MyHomePageState() {
-        _channel.stream.listen((data) {
-            var json_ = json.decode(String.fromCharCodes(data))["layers"];
-            print("$json_");
-            setState(() {
-                _layers = json_;
-            });
+    final Future<SharedPreferences> _prefsFurutre = SharedPreferences.getInstance();
+    late SharedPreferences sharedPreferences;
+
+    StreamSubscription connectToWS(String backend) {
+        _channel = WebSocketChannel.connect(Uri.parse("ws://$backend/live"));
+        return _channel.stream.listen((data) {
+                var json_ = json.decode(String.fromCharCodes(data))["layers"];
+                print("$json_");
+                setState(() {
+                    _layers = json_;
+                });
+        }, onError: (error) {
+            /* Hide the error message */
+        }, onDone: () {
+            sleep(Duration(seconds: 2));
+            connectToWS(backend);
         });
+    }
+
+    @override
+    void initState() {
+        super.initState();
+         _prefsFurutre.then((SharedPreferences prefs) {
+            
+            String? api_key = prefs.getString("api_key");
+            String? backend = prefs.getString("backend_url");
+
+            if (api_key != null && backend != null) {
 
 
-        var auth = ApiKeyAuth("header", "LED-API-KEY");
+                var auth = ApiKeyAuth("header", "LED-API-KEY");
+                auth.apiKey = api_key;
 
-        var key = dotenv.env["API_KEY"];
-        if (key != null) {    
-            auth.apiKey = key;
-        } else {
-            showDialog(
-                barrierColor: Colors.black26,
-                context: context,
-                builder: (context) {
-                    return const CustomAllertDialogue(
-                        title: "No API key",
-                        description: "There is no API Key present in this build. It has to be specitied in an .env file.",
-                    );
-                },
-            );
-        }
+                setState(() {
+                    api = ManipulateLayerApi(ApiClient(basePath: "http://$backend", authentication: auth));
+                });
 
-        api = ManipulateLayerApi(ApiClient(basePath: "http://10.2.0.1:777", authentication: auth));
+                connectToWS(backend);
 
+            } else {
+                print("No API Key");
+            }
+
+            sharedPreferences = prefs;
+
+        });
     }
 
     final ScrollController _controller = ScrollController();
@@ -93,24 +128,44 @@ class _MyHomePageState extends State<MyHomePage> {
             return CupertinoPageScaffold(
                 navigationBar: CupertinoNavigationBar(
                     middle: const Text("LED Controller"),
-                    trailing: CupertinoButton(
-                        child: const Icon(CupertinoIcons.plus),
+                    leading: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.settings, size: 28),
                         onPressed: () {
                             Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) {
+                                CupertinoPageRoute(builder: (context) {
+                                    return Settings(prefs: sharedPreferences);
+                                })
+                            );
+                        },
+                    ),
+                    trailing: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.plus, size: 28),
+                        onPressed: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(builder: (context) {
                                     return AddLayerPage(api: api);
                                 })
                             );
                         },
                     )
                 ),
-                child: Container(
+                child: api == null ? 
+                    const Center(
+                        child: Text("You have to set an API key and backend in the settings.", textAlign: TextAlign.center)
+                    ) : 
+                    Container(
                     margin: const EdgeInsets.only(top: 100),
                     child: Column(
                         children: <Widget>[
                         Expanded(
-                            child: CupertinoScrollbar(
+                            child: _layers.length == 0 ?
+                            const Center(
+                                child: Text("Currently there are no layers available.", textAlign: TextAlign.center)
+                            ) : CupertinoScrollbar(
                                 thickness: 6.0,
                                 thicknessWhileDragging: 10.0,
                                 radius: const Radius.circular(34.0),
@@ -121,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     shrinkWrap: true,
                                     scrollController: _controller,
                                     onReorder: (int start, int current) {
-                                        api.switchLayers(start, current);
+                                        api?.switchLayers(start, current);
                                     },
                                     itemCount: _layers.length,
                                     proxyDecorator: (w, i, t) {
@@ -145,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             onDismissed: (DismissDirection direction) {
                                                 setState(() async {
                                                     try {
-                                                        await api.deleteByUuid(_layers[index]["uuid"]);
+                                                        await api?.deleteByUuid(_layers[index]["uuid"]);
                                                     } catch(e) {
                                                         showDialog(
                                                             barrierColor: Colors.black26,
@@ -192,15 +247,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                     )
                                                                 ),
                                                                 get_animation_common_name(_layers[index], context),
-                                                                // const Spacer(),
-                                                                // const Padding(
-                                                                //     padding: EdgeInsets.only(right: 15),
-                                                                //     child: Icon(
-                                                                //         CupertinoIcons.bin_xmark,
-                                                                //         color: Colors.red,
-                                                                //         size: 25.0,
-                                                                //     )
-                                                                // )
+                                                                if (PlatformDetails().isDesktop) ...[
+                                                                    const Spacer(),
+                                                                    const Padding(
+                                                                        padding: EdgeInsets.only(right: 15),
+                                                                        child: Icon(
+                                                                            CupertinoIcons.bin_xmark,
+                                                                            color: Colors.red,
+                                                                            size: 25.0,
+                                                                        )
+                                                                    )
+                                                                ]
                                                             ],
                                                         )
                                                     )
@@ -242,6 +299,8 @@ Widget get_animation_common_name(LinkedHashMap animation, BuildContext context) 
                 );
             case "Crop":
                 return Text("Crop Filter (${animation['left']} | ${animation['right']})", style: style);
+            case "Timer":
+                return Text("Timer", style: style);
             default:
                 return Text("Unknown Animation: $animation", style: style);
         }
