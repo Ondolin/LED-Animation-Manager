@@ -2,15 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:openapi/api.dart';
+import 'package:throttling/throttling.dart';
 
 class AnimationDetailsPage extends StatefulWidget {
-    const AnimationDetailsPage({Key? key, required this.layers, required this.index, required this.api}) : super(key: key);
+    AnimationDetailsPage({Key? key, required this.layers, required this.index, required this.api}) : super(key: key);
 
     final List<dynamic> layers;
 
     final int index;
 
     final ManipulateLayerApi api;
+
+    final thr = Debouncing(duration: const Duration(milliseconds: 10));
 
     @override
         State<AnimationDetailsPage> createState() => _AnimationDetailState();
@@ -23,13 +26,13 @@ class _AnimationDetailState extends State<AnimationDetailsPage> {
         return CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
                 automaticallyImplyLeading: true,
-                middle: Text("${widget.layers[widget.index]['type']} layer ${widget.index + 1}")
+                middle: Text("${widget.layers[widget.index]['_type']} layer ${widget.index + 1}")
             ),
             child: Padding(
                 padding: const EdgeInsets.only(top: 100.0),
                 child: Column(
                     children: [
-                        Container(child: (widget.layers[widget.index]['type'] == "Color") ? 
+                        Container(child: (widget.layers[widget.index]['_type'] == "Color") ? 
                             Theme(
                                 data: ThemeData.dark(),
                                 child: Material(
@@ -42,7 +45,9 @@ class _AnimationDetailState extends State<AnimationDetailsPage> {
                                         ),
                                         enableAlpha: false,
                                         onColorChanged: (Color color) {
-                                            widget.api.changeColorLayer(widget.layers[widget.index]['uuid'], ColorProp(red: color.red, green: color.green, blue: color.blue));
+                                            widget.thr.debounce(() {
+                                                widget.api.changeColorLayer(widget.layers[widget.index]['uuid'], ColorProp(red: color.red, green: color.green, blue: color.blue));
+                                            });
                                         }
                                     ),
                                 )

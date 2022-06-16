@@ -13,37 +13,37 @@ part of openapi.api;
 class ColorProp {
   /// Returns a new [ColorProp] instance.
   ColorProp({
-    required this.blue,
     required this.red,
+    required this.blue,
     required this.green,
   });
 
-  int blue;
-
   int red;
+
+  int blue;
 
   int green;
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is ColorProp &&
-     other.blue == blue &&
      other.red == red &&
+     other.blue == blue &&
      other.green == green;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
-    (blue.hashCode) +
     (red.hashCode) +
+    (blue.hashCode) +
     (green.hashCode);
 
   @override
-  String toString() => 'ColorProp[blue=$blue, red=$red, green=$green]';
+  String toString() => 'ColorProp[red=$red, blue=$blue, green=$green]';
 
   Map<String, dynamic> toJson() {
     final _json = <String, dynamic>{};
-      _json[r'blue'] = blue;
       _json[r'red'] = red;
+      _json[r'blue'] = blue;
       _json[r'green'] = green;
     return _json;
   }
@@ -67,8 +67,8 @@ class ColorProp {
       }());
 
       return ColorProp(
-        blue: mapValueOfType<int>(json, r'blue')!,
         red: mapValueOfType<int>(json, r'red')!,
+        blue: mapValueOfType<int>(json, r'blue')!,
         green: mapValueOfType<int>(json, r'green')!,
       );
     }
@@ -119,8 +119,8 @@ class ColorProp {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
-    'blue',
     'red',
+    'blue',
     'green',
   };
 }

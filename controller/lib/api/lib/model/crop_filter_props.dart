@@ -13,32 +13,32 @@ part of openapi.api;
 class CropFilterProps {
   /// Returns a new [CropFilterProps] instance.
   CropFilterProps({
-    required this.left,
     required this.right,
+    required this.left,
   });
-
-  int left;
 
   int right;
 
+  int left;
+
   @override
   bool operator ==(Object other) => identical(this, other) || other is CropFilterProps &&
-     other.left == left &&
-     other.right == right;
+     other.right == right &&
+     other.left == left;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
-    (left.hashCode) +
-    (right.hashCode);
+    (right.hashCode) +
+    (left.hashCode);
 
   @override
-  String toString() => 'CropFilterProps[left=$left, right=$right]';
+  String toString() => 'CropFilterProps[right=$right, left=$left]';
 
   Map<String, dynamic> toJson() {
     final _json = <String, dynamic>{};
-      _json[r'left'] = left;
       _json[r'right'] = right;
+      _json[r'left'] = left;
     return _json;
   }
 
@@ -61,8 +61,8 @@ class CropFilterProps {
       }());
 
       return CropFilterProps(
-        left: mapValueOfType<int>(json, r'left')!,
         right: mapValueOfType<int>(json, r'right')!,
+        left: mapValueOfType<int>(json, r'left')!,
       );
     }
     return null;
@@ -112,8 +112,8 @@ class CropFilterProps {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
-    'left',
     'right',
+    'left',
   };
 }
 

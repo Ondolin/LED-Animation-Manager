@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,14 +46,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    int _counter = 0;
-    bool _toggle = false;
-
     final _channel =
         WebSocketChannel.connect(Uri.parse("ws://10.2.0.1:777/live"));
 
     var api;
-
 
     _MyHomePageState() {
         _channel.stream.listen((data) {
@@ -90,17 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var _layers = [];
 
-    void _incrementCounter() {
-        setState(() {
-            _counter++;
-        });
-    }
-
     @override
         Widget build(BuildContext context) {
+
             return CupertinoPageScaffold(
                 navigationBar: CupertinoNavigationBar(
-                    middle: _toggle ? Text("Hallo world $_counter") : const Text("hallo"),
+                    middle: const Text("LED Controller"),
                     trailing: CupertinoButton(
                         child: const Icon(CupertinoIcons.plus),
                         onPressed: () {
@@ -184,31 +176,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     height: 80,
                                                     padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                                                     child: Container(
-                                                        decoration: const BoxDecoration(
-                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                            color: Colors.white10
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                            color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black12 : Colors.white10
                                                         ),
                                                         padding: const EdgeInsets.fromLTRB(8.0, 2.0, 0.0, 2.0),
                                                         child: Row(
                                                             children: <Widget>[
-                                                                const Padding(
-                                                                    padding: EdgeInsets.only(right: 5.0),
+                                                                Padding(
+                                                                    padding: const EdgeInsets.only(right: 5.0),
                                                                     child: Icon(
                                                                         CupertinoIcons.ellipsis_vertical,
-                                                                        color: Colors.white,
+                                                                        color: CupertinoTheme.of(context).textTheme.textStyle.color,
                                                                         size: 20.0
                                                                     )
                                                                 ),
-                                                                Text(get_animation_common_name(_layers[index]), style: TextStyle(color: Colors.white)),
-                                                                const Spacer(),
-                                                                const Padding(
-                                                                    padding: EdgeInsets.only(right: 15),
-                                                                    child: Icon(
-                                                                        CupertinoIcons.bin_xmark,
-                                                                        color: Colors.red,
-                                                                        size: 25.0,
-                                                                    )
-                                                                )
+                                                                get_animation_common_name(_layers[index], context),
+                                                                // const Spacer(),
+                                                                // const Padding(
+                                                                //     padding: EdgeInsets.only(right: 15),
+                                                                //     child: Icon(
+                                                                //         CupertinoIcons.bin_xmark,
+                                                                //         color: Colors.red,
+                                                                //         size: 25.0,
+                                                                //     )
+                                                                // )
                                                             ],
                                                         )
                                                     )
@@ -225,16 +217,32 @@ class _MyHomePageState extends State<MyHomePage> {
         }
 }
 
-String get_animation_common_name(LinkedHashMap animation) {
-    
-        switch (animation["type"]) {
-            case "Wheel":
-                return "Rainbow Wheel Animation";
+Widget get_animation_common_name(LinkedHashMap animation, BuildContext context) {
+  
+    TextStyle style = TextStyle(color: CupertinoTheme.of(context).textTheme.textStyle.color);
+
+        switch (animation['_type']) {
+            case "RainbowWheel":
+                return Text("Rainbow Wheel Animation", style: style);
             case "Color":
-                return "Basic Color (${animation['value']['red']}, ${animation['value']['green']}, ${animation['value']['blue']})";
+                return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                        Text("Basic Color:", style: style),
+                        const SizedBox(width: 10),
+                        Container(
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(animation['value']['red'], animation['value']['green'], animation['value']['blue'], 1),
+                                borderRadius: BorderRadius.circular(360)
+                            ),
+                            width: 20,
+                            height: 20,
+                        )
+                    ],  
+                );
             case "Crop":
-                return "Crop Filter (${animation['left']} | ${animation['right']})";
+                return Text("Crop Filter (${animation['left']} | ${animation['right']})", style: style);
             default:
-                return "Unknown Animation: $animation";
+                return Text("Unknown Animation: $animation", style: style);
         }
     }

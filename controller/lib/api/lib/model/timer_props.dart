@@ -13,32 +13,32 @@ part of openapi.api;
 class TimerProps {
   /// Returns a new [TimerProps] instance.
   TimerProps({
-    required this.duration,
     required this.color,
+    required this.duration,
   });
-
-  int duration;
 
   ColorProp color;
 
+  int duration;
+
   @override
   bool operator ==(Object other) => identical(this, other) || other is TimerProps &&
-     other.duration == duration &&
-     other.color == color;
+     other.color == color &&
+     other.duration == duration;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
-    (duration.hashCode) +
-    (color.hashCode);
+    (color.hashCode) +
+    (duration.hashCode);
 
   @override
-  String toString() => 'TimerProps[duration=$duration, color=$color]';
+  String toString() => 'TimerProps[color=$color, duration=$duration]';
 
   Map<String, dynamic> toJson() {
     final _json = <String, dynamic>{};
-      _json[r'duration'] = duration;
       _json[r'color'] = color;
+      _json[r'duration'] = duration;
     return _json;
   }
 
@@ -61,8 +61,8 @@ class TimerProps {
       }());
 
       return TimerProps(
-        duration: mapValueOfType<int>(json, r'duration')!,
         color: ColorProp.fromJson(json[r'color'])!,
+        duration: mapValueOfType<int>(json, r'duration')!,
       );
     }
     return null;
@@ -112,8 +112,8 @@ class TimerProps {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
-    'duration',
     'color',
+    'duration',
   };
 }
 

@@ -12,28 +12,164 @@ class AddLayerPage extends StatefulWidget {
     ManipulateLayerApi api;
 
     @override
-        State<AddLayerPage> createState() => _AddLayerState();
+    State<AddLayerPage> createState() => _AddLayerState();
 }
 
 class Group {
     final String title;
-    final List<String> items;
+    final List<Item> items;
 
     Group({required this.title, required this.items});
 }
 
-class _AddLayerState extends State<AddLayerPage> {
+abstract class Item {
+    String title;
 
-    final ScrollController _controller = ScrollController();
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api);
 
-    final List<Group> groups = <Group>[
-        Group(title: "Static", items: ["Color Value"]),
-        Group(title: "Moving", items: ["Rainbow Wheel"]),
-        Group(title: "Filter", items: ["Crop", "Blur"])
-    ];
+    Item({required this.title});
+}
 
-    void _showBottomDialog(Widget child) {
-        showCupertinoModalPopup<void>(
+Future<Color?> colorDialog(BuildContext context) async {
+    Color pickerColor = Color(0xff443aff);
+    bool cancel = false;
+
+    await showCupertinoDialog(
+        context: context, 
+        builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+                title: const Text("Pick a color!"),
+                content: SingleChildScrollView(
+                    child: Theme(
+                        data: ThemeData.dark(),
+                        child: Material(
+                            child: ColorPicker(
+                                pickerColor: pickerColor,
+                                onColorChanged: (Color color) { pickerColor = color; },
+                                enableAlpha: false,
+                                // hexInputBar: true,
+                                displayThumbColor: true,
+                            ),
+                        )
+                    )
+                ),
+                actions: <Widget>[
+                    CupertinoButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                            Navigator.of(context).pop();
+                            cancel = true;
+                        },
+                    ),
+                    CupertinoButton(
+                        child: const Text("Finish"),
+                        onPressed: () {
+                            Navigator.of(context).pop();
+                        },
+                    ),
+                ],
+            );
+        },
+    );
+
+    return cancel ? null : pickerColor;
+}
+
+Future<CropFilterProps?> cropDialog(BuildContext context) async {
+    bool cancel = false;
+
+    int range_1 = 0;
+    int range_2 = 150;
+
+    TextEditingController controller_1 = TextEditingController(text: "$range_1");
+    controller_1.selection = TextSelection(baseOffset: 0, extentOffset: "$range_1".length);
+
+    TextEditingController controller_2 = TextEditingController(text: "$range_2");
+    controller_2.selection = TextSelection(baseOffset: 0, extentOffset: "$range_2".length);
+
+    await showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+                title: const Text("Pick a range."),
+                content: Column(
+                    children: <Widget>[
+                        CupertinoTextField(
+                            controller: controller_1, 
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) => range_1 = int.parse(value),
+                        ),
+                        CupertinoTextField(
+                            controller: controller_2,
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) => range_2 = int.parse(value)
+                        ),
+                    ],
+                ),
+                actions: <Widget>[
+                    CupertinoButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                            Navigator.of(context).pop();
+                            cancel = true;
+                        },
+                    ),
+                    CupertinoButton(
+                        child: const Text("Finish"),
+                        onPressed: () {
+                            Navigator.of(context).pop();
+                        },
+                    ),
+                ],
+
+            );
+        }
+    );
+
+    return cancel ? null : CropFilterProps(right: range_1, left:range_2);
+}
+
+Future<bool> confirmDialog(BuildContext context) async {
+    
+    bool confirm = false;
+
+    await showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+                title: const Text("Sure?"),
+                content: const Text("Are you sure you want to add this layer?"),
+                actions: <Widget>[
+                    CupertinoButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                            confirm = false;
+                            Navigator.of(context).pop();
+                        },
+                    ),
+                    CupertinoButton(
+                        child: const Text("Add"),
+                        onPressed: () {
+                            confirm = true;
+                            Navigator.of(context).pop();
+                        },
+                    ),
+                ],
+            );
+        },
+    );
+
+    return confirm;
+}
+
+Future<int> timePickerDialog(BuildContext context) async {
+
+    DateTime time = DateTime.utc(0, 0, 0, 0, 0, 0);
+    
+    Future<void> _showDialog(Widget child) async {
+        return await showCupertinoModalPopup<void>(
             context: context,
             builder: (BuildContext context) => Container(
                 height: 216,
@@ -49,9 +185,101 @@ class _AddLayerState extends State<AddLayerPage> {
                     top: false,
                     child: child,
                 ),
-            )
-        );
+                ));
     }
+
+    await _showDialog(CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    use24hFormat: true,
+                    initialDateTime: DateTime.utc(2000, 1, 0, 0, 0, 0),
+                    onDateTimeChanged: (DateTime dateTime) {
+                        time = dateTime;
+                    },
+                )
+    );
+
+    return (time.minute + time.hour * 60) * 60;
+    
+}
+
+class ColorValueItem implements Item{
+    @override
+    String title = "Color Value";
+
+    @override
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+        
+        Color? color = await colorDialog(context);
+
+        if (color != null) {
+            api.addColorLayer(ColorProp(red: color.red, green: color.green, blue: color.blue));
+            return true;
+        }
+
+        return false;
+    }
+}
+
+class CropItem implements Item {
+    @override
+    String title = "Crop";
+
+    @override
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+
+        CropFilterProps? props = await cropDialog(context);
+
+        if (props != null) {
+            api.addCropFilterLayer(props);
+            return true;
+        }
+
+        return false;
+    }
+}
+
+class RainbowWheelItem implements Item {
+    @override
+    String title = "Rainbow Wheel";
+
+    @override
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+        if (await confirmDialog(context)) {
+            api.addWheelLayer();
+            return true;
+        }
+        return false;
+    }
+}
+
+class TimerItem implements Item {
+    @override
+    String title = "Timer";
+
+    @override
+    Future<bool> onAdd(BuildContext context, ManipulateLayerApi api) async {
+        int time = await timePickerDialog(context);
+
+        if (time > 0) {
+            api.addTimerLayer(TimerProps(color: ColorProp(red: 255, green: 0, blue: 0), duration: time));
+            return true;
+        }
+
+        return false;
+    }
+}
+
+class _AddLayerState extends State<AddLayerPage> {
+
+    final ScrollController _controller = ScrollController();
+
+    void addColorValue() {}
+
+    final List<Group> groups = <Group>[
+        Group(title: "Static", items: [ColorValueItem()]),
+        Group(title: "Moving", items: [RainbowWheelItem(), TimerItem()]),
+        Group(title: "Filter", items: [CropItem()])
+    ];
 
     @override
         Widget build(BuildContext context) {
@@ -126,152 +354,15 @@ class LayerGroupState extends State<LayerGroupSelect> {
                                     padding: const EdgeInsets.fromLTRB(16.0, 2.0, 0.0, 2.0),
                                     child: Row(
                                         children: <Widget>[
-                                            Text(widget.group.items[index]),
+                                            Text(widget.group.items[index].title),
                                             const Spacer(),
                                             CupertinoButton(
                                                 onPressed: () async {
+                                                    bool success = await widget.group.items[index].onAdd(context, widget.api);
 
-                                                    Color pickerColor = Color(0xff443aff);
-                                                    bool cancel = false;
-        
-                                                    if (["Color Value"].contains(widget.group.items[index])) {
-                                                        await showCupertinoDialog(
-                                                            context: context, 
-                                                            builder: (BuildContext context) {
-                                                                return CupertinoAlertDialog(
-                                                                    title: const Text("Pick a color!"),
-                                                                    content: SingleChildScrollView(
-                                                                        child: Theme(
-                                                                            data: ThemeData.dark(),
-                                                                            child: Material(
-                                                                                child: ColorPicker(
-                                                                                    pickerColor: pickerColor,
-                                                                                    onColorChanged: (Color color) { pickerColor = color; },
-                                                                                    enableAlpha: false,
-                                                                                    // hexInputBar: true,
-                                                                                    displayThumbColor: true,
-                                                                                ),
-                                                                            )
-                                                                        )
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                        CupertinoButton(
-                                                                            child: const Text("Cancel"),
-                                                                            onPressed: () {
-                                                                                Navigator.of(context).pop();
-                                                                                cancel = true;
-                                                                            },
-                                                                        ),
-                                                                        CupertinoButton(
-                                                                            child: const Text("Finish"),
-                                                                            onPressed: () {
-                                                                                Navigator.of(context).pop();
-                                                                            },
-                                                                        ),
-                                                                    ],
-                                                                );
-                                                            },
-                                                        );
+                                                    if (success) {
+                                                        Navigator.pop(context);
                                                     }
-
-                                                    print("$pickerColor");
-
-                                                    int range_1 = 0;
-                                                    int range_2 = 150;
-
-                                                    if (["Crop"].contains(widget.group.items[index])) {
-
-                                                        TextEditingController controller_1 = TextEditingController(text: "$range_1");
-                                                        controller_1.selection = TextSelection(baseOffset: 0, extentOffset: "$range_1".length);
-
-                                                        TextEditingController controller_2 = TextEditingController(text: "$range_2");
-                                                        controller_2.selection = TextSelection(baseOffset: 0, extentOffset: "$range_2".length);
-
-                                                        await showCupertinoDialog(
-                                                            context: context,
-                                                            builder: (BuildContext context) {
-                                                                return CupertinoAlertDialog(
-                                                                    title: const Text("Pick a range."),
-                                                                    content: Column(
-                                                                        children: <Widget>[
-                                                                            CupertinoTextField(
-                                                                                controller: controller_1, 
-                                                                                autofocus: true,
-                                                                                keyboardType: TextInputType.number,
-                                                                                onChanged: (value) => range_1 = int.parse(value),
-                                                                            ),
-                                                                            CupertinoTextField(
-                                                                                controller: controller_2,
-                                                                                autofocus: true,
-                                                                                keyboardType: TextInputType.number,
-                                                                                onChanged: (value) => range_2 = int.parse(value)
-                                                                            ),
-                                                                        ],
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                        CupertinoButton(
-                                                                            child: const Text("Cancel"),
-                                                                            onPressed: () {
-                                                                                Navigator.of(context).pop();
-                                                                                cancel = true;
-                                                                            },
-                                                                        ),
-                                                                        CupertinoButton(
-                                                                            child: const Text("Finish"),
-                                                                            onPressed: () {
-                                                                                Navigator.of(context).pop();
-                                                                            },
-                                                                        ),
-                                                                    ],
-
-                                                                );
-                                                            }
-                                                        );
-                                                    }
-
-                                                    if (["Rainbow Wheel"].contains(widget.group.items[index])) {
-                                                        await showCupertinoDialog(
-                                                            context: context,
-                                                            builder: (BuildContext context) {
-                                                                return CupertinoAlertDialog(
-                                                                    title: const Text("Sure?"),
-                                                                    content: const Text("Are you sure you want to add this layer?"),
-                                                                    actions: <Widget>[
-                                                                        CupertinoButton(
-                                                                            child: const Text("Cancel"),
-                                                                            onPressed: () {
-                                                                                Navigator.of(context).pop();
-                                                                                cancel = true;
-                                                                            },
-                                                                        ),
-                                                                        CupertinoButton(
-                                                                            child: const Text("Add"),
-                                                                            onPressed: () {
-                                                                                Navigator.of(context).pop();
-                                                                            },
-                                                                        ),
-                                                                    ],
-                                                                );
-                                                            },
-                                                        );
-                                                    }
-
-                                                    if (!cancel) {
-                                                        switch (widget.group.items[index]) {
-                                                            case "Color Value":
-
-                                                                widget.api.addColorLayer(ColorProp(red: pickerColor.red, green: pickerColor.green, blue: pickerColor.blue));
-                                                                break;
-                                                            case "Rainbow Wheel":
-                                                                widget.api.addWheelLayer();
-                                                                break;
-                                                            case "Crop":
-                                                                widget.api.addCropFilterLayer(CropFilterProps(left: range_1, right: range_2));
-                                                        }    
-                                                    }
-
-                                                    
-
                                                 },
                                                 child: const Padding(
                                                     padding: EdgeInsets.only(right: 15),
