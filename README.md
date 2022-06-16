@@ -12,8 +12,12 @@ All other parts of this project are optional.
 
 ## Installation
 
-### Server
+### [Server](https://github.com/Ondolin/LED-Animation-Manager/tree/master/server)
 
-### LED-Client
+### [LED-Client](https://github.com/Ondolin/LED-Animation-Manager/blob/master/led-client)
 
-### Controller App
+### [Controller App](https://github.com/Ondolin/LED-Animation-Manager/tree/master/controller)
+
+## Contribute
+
+Feel free to contribute to this project by submitting issues and pull requests. I would realy appreciate your work.
